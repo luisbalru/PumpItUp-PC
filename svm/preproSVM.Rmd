@@ -1,0 +1,47 @@
+---
+title: "Untitled"
+author: "Iván Sevillano García"
+date: "26/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Preprocesamiento de datos para SVM
+
+```{r}
+library(cluster)
+library(fpc)
+library(caret)
+library(dplyr)
+setwd("/home/ivan/Documentos/MEGA/Master/MineriaDeDatos_Prepro_Clasificacion/Trabajo/PumpItUp-PC/svm/")
+training <- read.csv("../data/training.csv")
+training.labels <- read.csv("../data/training-labels.csv")
+test <-read.csv("../data/test.csv")
+clases <- training.labels[order(training$id),-1]
+tipos.clase <- unique(clases)
+vector.clases <- 1:length(clases)
+vector.clases[clases == tipos.clase[1]] <- 0
+vector.clases[clases == tipos.clase[2]] <- 1
+vector.clases[clases == tipos.clase[3]] <- 2
+
+
+dataView <- training[order(training$id),-1]
+# Aquí empieza el preprocesamiento.
+
+# Primero, la fecha la cambiamos a un valor con sentido que no sea string.
+
+dataView$date_recorded <- as.numeric(as.Date(dataView$date_recorded))
+
+# Eliminamos valores con información repetida: region e region_id dan la misma informacion
+
+dataView <- select(dataView,-region)
+
+```
+
+```{r}
+plotcluster(dataView,vector.clases)
+```
+
