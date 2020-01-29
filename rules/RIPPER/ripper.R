@@ -69,7 +69,10 @@ data = rbind(train,test)
 
 # Estudio de amount_sh
 summary(data$amount_tsh)
-
+summary(data$amount_tsh[data$amount_tsh>0])
+hist(data$amount_tsh)
+# Apenas hay datos con amount_sh > 10000, luego esos valores pueden incluso despistar
+table(data$status_group[data$amount_tsh>10000],data$amount_tsh[data$amount_tsh>10000])
 
 # Estudio de latitude. Según Google Maps, debe estar entre -15 y 0.
 summary(data$latitude)
