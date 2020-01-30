@@ -198,7 +198,40 @@ data$waterpoint_type_group = as.character(data$waterpoint_type_group)
 data$waterpoint_type_group[data$waterpoint_type_group == 'dam'] = 'other'
 data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
 
+# funder
+table(data$funder)
+data$funder = as.character(data$funder)
+data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
+data$funder = as.factor(data$funder)
+table(data$funder)
 
+#installer
+table(data$installer)
+data$installer = as.character(data$installer)
+data$installer[data$installer == '' | data$installer == 0 | data$installer == '-'] = 'desconocido'
+data$installer = as.factor(data$installer)
+table(data$installer)
+
+# wpt_name --> no MV
+table(data$wpt_name)
+
+# basin --> no MV
+table(data$basin)
+
+# region
+table(data$region)
+
+# region code
+table(data$region_code)
+
+# lga
+table(data$lga)
+
+# ward
+table(data$ward)
+
+# scheme_name
+table(data$scheme_name)
 ################################################
 
 ################################################
@@ -208,15 +241,30 @@ variables_numericas = subset(data, select=c(amount_tsh, gps_height, longitude, l
 cor(variables_numericas)
 
 
+
+
+
 ################################################
 # CLASIFICACIÓN
 
-train = subset(train, select=c(-id))
+inicio_test = nrow(train) + 1
+fin = nrow(data)
+train = data[1:(inicio_test-1),]
+test = data[inicio_test:fin,]
+
 
 # INTENTO 1. TODAS LAS VARIABLES. ERROR DE MEMORIA EN HEAP. Necesario seleccionar variables
-model.Ripper = JRip(status_group~., train)
 
-summary(model.Ripper)
+model.Ripper1 = JRip(status_group~.-id, train)
+
+# INTENTO 2. QUITO VARIABLES CON MÁS OUTLIERS SIN POSIBILIDAD DE ARREGLAR Y LAS REPETIDAS (A MI JUICIO)
+
+model.Ripper2 = JRip(status_group~amount_tsh+latitude+longitude+basin+lga+ward+region+population+antiguedad+
+                      gps_height+public_meeting+scheme_management+permit+extraction_type_class+
+                      management_group+quality_group+quantity_group+source_type+ source_class+
+                      waterpoint_type_group, train)
+
+summary(model.Ripper2)
 
 
 model.Ripper.pred = predict(model.Ripper, newdata = iris.test)
