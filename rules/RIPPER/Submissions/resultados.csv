@@ -1,2 +1,4 @@
-Intento, File, Accuracy,
-2,submission_int2.csv,0.7420,
+Intento, File, Accuracy
+2,submission_int2.csv,0.7420
+3,submission_int3.csv,0.7455
+4,submission_int4.csv,0.7325

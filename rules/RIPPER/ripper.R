@@ -8,6 +8,18 @@ library(ggplot2)
 library(rpart)
 library(dplyr)
 
+
+###############################################
+# FUNCIONES PROPIAS
+generaSubida = function(numero, test_id, prediccion){
+  nombre = paste("submission_int",numero,".csv", sep="")
+  submission = data.frame(test_id)
+  submission$status_group = prediccion
+  colnames(submission) = c("id", "status_group")
+  write.csv(submission,file=nombre, row.names = FALSE)
+  
+}
+
 # Lectura de datos
 train = read.csv("training.csv")
 labels = read.csv("training-labels.csv")
@@ -257,7 +269,7 @@ test = data[inicio_test:fin,]
 
 model.Ripper1 = JRip(status_group~.-id, train)
 
-# INTENTO 2. QUITO VARIABLES CON MÁS OUTLIERS SIN POSIBILIDAD DE ARREGLAR Y LAS REPETIDAS (A MI JUICIO)
+# INTENTO 2. QUITO VARIABLES CON MÁS OUTLIERS SIN POSIBILIDAD DE ARREGLAR Y LAS REPETIDAS (A MI JUICIO) --> 0.7420 
 
 model.Ripper2 = JRip(status_group~amount_tsh+latitude+longitude+basin+lga+ward+region+population+antiguedad+
                       gps_height+public_meeting+scheme_management+permit+extraction_type_class+
@@ -273,5 +285,24 @@ submission_int2$status_group = model.Ripper2.pred
 colnames(submission_int2) = c("id", "status_group")
 write.csv(submission_int2,file="submission_int2.csv", row.names = FALSE)
 
+# INTENTO 3. MODIFICACIÓN EN UNA VARIABLE --> 0.7455 
 
+model.Ripper3 = JRip(status_group~amount_tsh+latitude+longitude+basin+region+population+antiguedad+
+                       gps_height+public_meeting+scheme_management+permit+extraction_type_class+
+                       management_group+quality_group+quantity_group+source_type+ source_class+
+                       waterpoint_type_group, train)
 
+summary(model.Ripper3)
+model.Ripper3.pred = predict(model.Ripper3,newdata = test)
+
+generaSubida("3",test$id,model.Ripper3.pred)
+
+# INTENTO 4. REDUCCIÓN DRÁSTICA DE VARIABLES --> Peor resultado: 0.7325
+
+model.Ripper4 = JRip(status_group~amount_tsh+latitude+longitude+population+antiguedad+
+                       gps_height+extraction_type_class+quantity_group+waterpoint_type_group, train)
+
+summary(model.Ripper4)
+model.Ripper4.pred = predict(model.Ripper4,newdata = test)
+
+generaSubida("4",test$id,model.Ripper4.pred)
