@@ -186,7 +186,19 @@ data$permit = as.character(data$permit)
 data$permit[data$permit == ''] = 'desconocido'
 data$permit = as.factor(data$permit)
 
-# RESTO DE VALORES PERDIDOS
+# public_meeting
+table(data$public_meeting)
+data$public_meeting = as.character(data$public_meeting)
+data$public_meeting[data$public_meeting == ''] = 'desconocido'
+data$public_meeting = as.factor(data$public_meeting)
+
+# waterpoint_type_group
+table(data$waterpoint_type_group)
+data$waterpoint_type_group = as.character(data$waterpoint_type_group)
+data$waterpoint_type_group[data$waterpoint_type_group == 'dam'] = 'other'
+data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
+
+
 
 
 
