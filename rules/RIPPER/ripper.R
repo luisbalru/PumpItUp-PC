@@ -199,18 +199,21 @@ data$waterpoint_type_group[data$waterpoint_type_group == 'dam'] = 'other'
 data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
 
 
-
-
-
 ################################################
 
-
+################################################
+# Correlación
+# No se muestran correlaciones entre las variables numéricas
+variables_numericas = subset(data, select=c(amount_tsh, gps_height, longitude, latitude))
+cor(variables_numericas)
 
 
 ################################################
 # CLASIFICACIÓN
 
+train = subset(train, select=c(-id))
 
+# INTENTO 1. TODAS LAS VARIABLES. ERROR DE MEMORIA EN HEAP. Necesario seleccionar variables
 model.Ripper = JRip(status_group~., train)
 
 summary(model.Ripper)
