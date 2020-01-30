@@ -267,4 +267,11 @@ model.Ripper2 = JRip(status_group~amount_tsh+latitude+longitude+basin+lga+ward+r
 summary(model.Ripper2)
 
 
-model.Ripper.pred = predict(model.Ripper, newdata = iris.test)
+model.Ripper2.pred = predict(model.Ripper2, newdata = test)
+submission_int2 = data.frame(test$id)
+submission_int2$status_group = model.Ripper2.pred
+colnames(submission_int2) = c("id", "status_group")
+write.csv(submission_int2,file="submission_int2.csv", row.names = FALSE)
+
+
+
