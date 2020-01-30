@@ -142,6 +142,54 @@ data$longitude[data$region=="Tanga" & data$longitude==0] = 38.50195
 hist(data$longitude)
 
 
+# Estudio population
+hist(data$population)
+# Número de fuentes con nadie alrededor --> 26834
+# Según las estadísticas, la población en Tanzania es de 67 personas/km². Parecen valores perdidos
+length(data$population[data$population==0])
+# Con más de 5000 personas
+hist(data$population[data$population>5000])
+# Apenas hay zonas con más de 10000 personas alrededor de la fuente
+hist(data$population[data$population>10000])
+# Utilizo la media para los MV 
+data$population[data$population==0] = round(mean(data$population[data$population!=0]),digits = 0)
+hist(data$population)
+table(data$population)
+table(data$status_group[data$population>5000],data$population[data$population>5000])
+# Concentro los valores superiores a 5000 en 5000
+data$population[data$population>5000] = 5000
+hist(data$population)
+
+# Creación de la variable antiguedad para trabajar con construction_year
+data$antiguedad = max(data$construction_year) - data$construction_year
+table(data$antiguedad)
+# La mayoría de las fuentes (25969) tienen 2013 años de antigüedad, es decir, construction_year contenía un 0 (MV). Por tanto,
+# trabajo con la media de las antigüedades para solucionarlo
+data$antiguedad[data$antiguedad == max(data$construction_year)] = round(median(data$antiguedad[data$antiguedad != max(data$construction_year)]),digits = 0)
+hist(data$antiguedad)
+
+# VARIABLES CATEGÓRICAS CON VALORES DISPARES
+
+# scheme-management. Los minoritarios a Other
+table(data$scheme_management)
+data$scheme_management = as.character(data$scheme_management)
+data$scheme_management[data$scheme_management == 'None'] = 'Other'
+data$scheme_management[data$scheme_management == 'SWC'] = 'Other'
+data$scheme_management[data$scheme_management == 'Trust'] = 'Other'
+data$scheme_management[data$scheme_management == ''] = 'Other'
+data$scheme_management = as.factor(data$scheme_management)
+table(data$scheme_management)
+
+# permit --> introduzco desconocido
+table(data$permit)
+data$permit = as.character(data$permit)
+data$permit[data$permit == ''] = 'desconocido'
+data$permit = as.factor(data$permit)
+
+# RESTO DE VALORES PERDIDOS
+
+
+
 ################################################
 
 
