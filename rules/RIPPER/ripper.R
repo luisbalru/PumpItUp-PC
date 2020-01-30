@@ -5,6 +5,7 @@
 
 library(RWeka)
 library(ggplot2)
+library(rpart)
 library(dplyr)
 
 # Lectura de datos
@@ -73,6 +74,33 @@ summary(data$amount_tsh[data$amount_tsh>0])
 hist(data$amount_tsh)
 # Apenas hay datos con amount_sh > 10000, luego esos valores pueden incluso despistar
 table(data$status_group[data$amount_tsh>10000],data$amount_tsh[data$amount_tsh>10000])
+# Por tanto, los valores mayores que 10000 parecen ser outliers, por lo que
+# les doy el valor de 10000
+data$amount_tsh[data$amount_tsh>=10000] = 10000
+hist(data$amount_tsh)
+hist(data$amount_tsh[data$amount_tsh>=5000])
+# Parece haber una gran frecuencia entorno al 0, dato que no tendría sentido
+length(data$amount_tsh[data$amount_tsh==0]) # 52049 casos de 0
+length(train$amount_tsh[train$amount_tsh == 0]) #41639 en train
+length(test$amount_tsh[test$amount_tsh == 0]) # 10410 en test
+
+# Trabajo con fechas. Transformamos a fechas formales
+data$date_recorded = as.Date(data$date_recorded)
+
+# Estudio de gps_height
+hist(data$gps_height)
+summary(data$gps_height)
+length(data$gps_height[data$gps_height == 0]) # 25649
+length(data$gps_height[data$gps_height < 0]) # 1881 casos menores de 0
+
+# Defino un árbol de decisión para rellenar los valores perdidos (<=0) de gps_height
+# en función de la longitud y latitud del terreno
+mv_gps = rpart(gps_height ~ latitude + longitude, data = data[(data$gps_height>0),], method = "anova")
+data$gps_height[data$gps_height <= 0] = predict(mv_gps,data[(data$gps_height<=0),])
+# Dada la orografía de Tanzania, tras la predicción tiene más sentido el resultado de la altura
+hist(data$gps_height)
+summary(data$gps_height)
+
 
 # Estudio de latitude. Según Google Maps, debe estar entre -15 y 0.
 summary(data$latitude)
