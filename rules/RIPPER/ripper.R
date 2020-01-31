@@ -214,9 +214,13 @@ data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
 table(data$funder)
 data$funder = as.character(data$funder)
 data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
-ifelse(table(data$funder)<=100,rownames)
+minoritarios = rownames(tabla_funder[tabla_funder<=150])
+data$funder[data$funder %in% minoritarios] = "otros"
 data$funder = as.factor(data$funder)
 table(data$funder)
+
+# basin
+table(data$basin)
 
 #installer
 table(data$installer)
@@ -308,7 +312,7 @@ model.Ripper4.pred = predict(model.Ripper4,newdata = test)
 
 generaSubida("4",test$id,model.Ripper4.pred)
 
-# INTENTO 5. RETOMANDO 3 Y AUMENTANDO NÚMERO DE VARIABLES --> Sin mejora
+# INTENTO 5. RETOMANDO 3 Y PREPROCESANDO FUNDER -->0.7457
 
 model.Ripper5 = JRip(status_group~amount_tsh+latitude+longitude+basin+region+funder+population+antiguedad+
                        gps_height+public_meeting+scheme_management+permit+extraction_type_class+
@@ -319,4 +323,28 @@ summary(model.Ripper5)
 model.Ripper5.pred = predict(model.Ripper5,newdata = test)
 
 generaSubida("5",test$id,model.Ripper5.pred)
+
+# INTENTO 6. RETOMANDO 5, ELIMINANDO PERMIT Y PUBLIC_MEETING --> 0.7436
+
+model.Ripper6 = JRip(status_group~amount_tsh+latitude+longitude+basin+region+funder+population+antiguedad+
+                       gps_height+scheme_management+permit+extraction_type_class+
+                       management_group+quality_group+quantity_group+source_type+ source_class+
+                       waterpoint_type_group, train)
+
+summary(model.Ripper6)
+model.Ripper6.pred = predict(model.Ripper6,newdata = test)
+
+generaSubida("6",test$id,model.Ripper6.pred)
+
+# INTENTO 7. RETOMANDO 3 Y PREPROCESANDO FUNDER --> 0.7436
+
+model.Ripper7 = JRip(status_group~amount_tsh+latitude+longitude+basin+region+funder+population+antiguedad+
+                       gps_height+scheme_management+permit+extraction_type_class+
+                       management_group+quality_group+quantity_group+source_type+ source_class+
+                       waterpoint_type_group, train)
+
+summary(model.Ripper7)
+model.Ripper7.pred = predict(model.Ripper7,newdata = test)
+
+generaSubida("7",test$id,model.Ripper7.pred)
 
