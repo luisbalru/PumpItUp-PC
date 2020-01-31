@@ -214,6 +214,7 @@ data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
 table(data$funder)
 data$funder = as.character(data$funder)
 data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
+ifelse(table(data$funder)<=100,rownames)
 data$funder = as.factor(data$funder)
 table(data$funder)
 
@@ -306,3 +307,16 @@ summary(model.Ripper4)
 model.Ripper4.pred = predict(model.Ripper4,newdata = test)
 
 generaSubida("4",test$id,model.Ripper4.pred)
+
+# INTENTO 5. RETOMANDO 3 Y AUMENTANDO NÚMERO DE VARIABLES --> Sin mejora
+
+model.Ripper5 = JRip(status_group~amount_tsh+latitude+longitude+basin+region+funder+population+antiguedad+
+                       gps_height+public_meeting+scheme_management+permit+extraction_type_class+
+                       management_group+quality_group+quantity_group+source_type+ source_class+
+                       waterpoint_type_group, train)
+
+summary(model.Ripper5)
+model.Ripper5.pred = predict(model.Ripper5,newdata = test)
+
+generaSubida("5",test$id,model.Ripper5.pred)
+
