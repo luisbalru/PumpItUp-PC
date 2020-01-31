@@ -273,6 +273,11 @@ test = data[inicio_test:fin,]
 # INTENTO 1. TODAS LAS VARIABLES. ERROR DE MEMORIA EN HEAP. Necesario seleccionar variables
 
 model.Ripper1 = JRip(status_group~.-id, train)
+summary(model.Ripper1)
+model.Ripper1.pred = predict(model.Ripper1,newdata = test)
+
+generaSubida("1",test$id,model.Ripper1.pred)
+
 
 # INTENTO 2. QUITO VARIABLES CON MÁS OUTLIERS SIN POSIBILIDAD DE ARREGLAR Y LAS REPETIDAS (A MI JUICIO) --> 0.7420 
 
