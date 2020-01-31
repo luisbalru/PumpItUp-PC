@@ -338,10 +338,10 @@ generaSubida("6",test$id,model.Ripper6.pred)
 
 # INTENTO 7. RETOMANDO 3 Y PREPROCESANDO FUNDER --> 0.7436
 
-model.Ripper7 = JRip(status_group~amount_tsh+latitude+longitude+basin+region+funder+population+antiguedad+
-                       gps_height+scheme_management+permit+extraction_type_class+
-                       management_group+quality_group+quantity_group+source_type+ source_class+
-                       waterpoint_type_group, train)
+model.Ripper7 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
+                       gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                       management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                       waterpoint_type, train)
 
 summary(model.Ripper7)
 model.Ripper7.pred = predict(model.Ripper7,newdata = test)
