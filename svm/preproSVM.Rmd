@@ -16,6 +16,7 @@ library(cluster)
 library(fpc)
 library(caret)
 library(dplyr)
+library(e1071)
 setwd("/home/ivan/Documentos/MEGA/Master/MineriaDeDatos_Prepro_Clasificacion/Trabajo/PumpItUp-PC/svm/")
 training <- read.csv("../data/training.csv")
 training.labels <- read.csv("../data/training-labels.csv")
@@ -26,7 +27,7 @@ vector.clases <- 1:length(clases)
 vector.clases[clases == tipos.clase[1]] <- 0
 vector.clases[clases == tipos.clase[2]] <- 1
 vector.clases[clases == tipos.clase[3]] <- 2
-
+vector.clases <- as.factor(vector.clases)
 
 dataView <- training[order(training$id),-1]
 # Aquí empieza el preprocesamiento.
@@ -35,13 +36,31 @@ dataView <- training[order(training$id),-1]
 
 dataView$date_recorded <- as.numeric(as.Date(dataView$date_recorded))
 
-# Eliminamos valores con información repetida: region e region_id dan la misma informacion
+# Eliminamos valores con información repetida: region y region_id dan la misma informacion.
 
 dataView <- select(dataView,-region)
+attach(dataView)
+dataView <- select(dataView,amount_tsh ,date_recorded,gps_height,longitude,latitude,population,num_private,region_code,construction_year)
+dataView <- data.frame(vector.clases,dataView)
+dataView<- distinct(dataView)
+summary(dataView)
 
 ```
 
 ```{r}
-plotcluster(dataView,vector.clases)
+plotcluster(dataView[-1],dataView[,1])
+```
+
+Primer modelo svm con todas las variables numéricas(hace falta bastante preprocesamiento).
+```{r}
+# Para que la función svm() calcule el Support Vector Classifier,
+# se tiene que indicar que la función kernel es lineal.
+prueba <- dataView[sample(nrow(dataView),1200),]
+train <- prueba[1:1000,]
+test <- prueba[1001:1200,]
+modelo_svm <- svm(formula = vector.clases ~ ., data = train, kernel = "linear",cost = 10, scale = FALSE)
+
+predicciones <- predict(object = modelo_svm, test[-1,])
+paste("Error de test:", 100*mean(test$vector.clases != predicciones),"%")
 ```
 
