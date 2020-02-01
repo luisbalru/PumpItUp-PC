@@ -11,21 +11,19 @@ import preprocessing
 
 np.random.seed(123456789)
 
-classifier = KNeighborsClassifier(n_neighbors=3, n_jobs=-1)
+classifier = KNeighborsClassifier(n_neighbors=7, n_jobs=-1)
 
 print("Reading train/test sets...")
 X_train, y_train, X_test = preprocessing.readData()
 
-print("Pipeline for train set...")
-X_train, y_train, _ = pipeline.Pipeline(X_train, y_train)
-print("Pipeline for test set...")
-X_test,_ , id = pipeline.Pipeline(X_test,train=False, dim=len(X_train[0]))
-id = id.astype(int)
+print("Pipeline for train/test sets...")
+X_train, y_train, id_train, X_test, id_test = pipeline.Pipeline(X_train, y_train, X_test)
+id_test = id_test.astype(int)
 
 print("Fitting KNN classifier...")
 classifier.fit(X_train, y_train)
 
 print("Predicting over test set...")
 pred = classifier.predict(X_test)
-res = pd.DataFrame({"id":id, "status_group":pred})
+res = pd.DataFrame({"id":id_test, "status_group":pred})
 res.to_csv("../submissions/new_submission.csv", index=False)
