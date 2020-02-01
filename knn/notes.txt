@@ -1,0 +1,2 @@
+Primera submission: K=3 sin ningún preprocesamiento 71.89%
+Segunda submission: K=3 con normalización 76.28%
