@@ -3,23 +3,30 @@ from sklearn.decomposition import PCA
 from imblearn.over_sampling import SMOTE
 from sklearn import preprocessing
 
+import autoencoder
+
 import numpy as np
 
-def Pipeline(X,y=[], train=True, dim=-1):
-    id = np.array(X["id"])
-    X = X.drop(columns=["id"])
-    X = np.array(X)
-    y = np.array(y)
+def Pipeline(X_train, y_train, X_test):
+    id_train = np.array(X_train["id"])
+    X_train = X_train.drop(columns=["id"])
+    id_test = np.array(X_test["id"])
+    X_test = X_test.drop(columns=["id"])
 
-    X = preprocessing.scale(X)
+    X_train = np.array(X_train)
+    y_train = np.array(y_train)
+    X_test = np.array(X_test)
+
+    X_train = preprocessing.scale(X_train)
+    X_test = preprocessing.scale(X_test)
+
+    #hid = [1024,512,256,128]
+    #X_train, X_test = autoencoder.fitTransform(X_train, X_test, 10, hid, bsize=32)
 
     '''
-    if dim==-1:
-        X = PCA().fit_transform(X)
-    else:
-        X = PCA(n_components=dim).fit_transform(X)
+    X = PCA(n_components=700).fit_transform(X)
 
     if train:
         X,y = SMOTE(random_state=123456789).fit_resample(X,y)
     '''
-    return X,y,id
+    return X_train, y_train, id_train, X_test, id_test
