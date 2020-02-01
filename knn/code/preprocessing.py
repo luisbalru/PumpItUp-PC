@@ -18,25 +18,25 @@ types = {
     "id" : "int",
     "amount_tsh" : "float",
     "date_recorded" : "datetime64",
-    "funder" : "str",
+    #"funder" : "str",
     "gps_height" : "float",
-    "installer" : "str",
+    #"installer" : "str",
     "longitude" : "float",
     "latitude" : "float",
-    "wpt_name" : "str",
+    #"wpt_name" : "str",
     "num_private" : "int",
     "basin" : "str",
-    "subvillage" : "str",
+    #"subvillage" : "str",
     "region" : "str",
     "region_code" : "int",
     "district_code" : "int",
     "lga" : "str",
-    "ward" : "str",
+    #"ward" : "str",
     "population" : "int",
     "public_meeting" : "bool",
     "recorded_by" : "str",
     "scheme_management" : "str",
-    "scheme_name" : "str",
+    #"scheme_name" : "str",
     "permit" : "bool",
     "construction_year" : "int",
     "extraction_type" : "str",
@@ -57,17 +57,17 @@ types = {
     "waterpoint_type_group" : "str"
 }
 
-categorical_columns = ["funder",
-                        "installer",
-                        "wpt_name",
+categorical_columns = [#"funder",
+                        #"installer",
+                        #"wpt_name",
                         "basin",
-                        "subvillage",
+                        #"subvillage",
                         "region",
                         "lga",
-                        "ward",
+                        #"ward",
                         "recorded_by",
                         "scheme_management",
-                        "scheme_name",
+                        #"scheme_name",
                         "extraction_type",
                         "extraction_type_group",
                         "extraction_type_class",
@@ -156,13 +156,13 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
 
     data = pd.concat([data_train, data_test])
 
+    data = data.drop(columns=["wpt_name","subvillage","scheme_name", "funder", "installer", "ward"])
+
     # Convertimos la fecha a float
     min_date = data["date_recorded"].min()
     for i in range(len(data)):
         # In days
         data["date_recorded"].iloc[i] = (data["date_recorded"].iloc[i]-min_date).total_seconds()/86400
-
-    #data = data.drop(columns=["date_recorded"])
 
     for cat in categorical_columns:
         data[cat] = pd.Categorical(data[cat])
