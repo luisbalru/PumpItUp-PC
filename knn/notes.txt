@@ -1,0 +1,3 @@
+Primera submission: K=3 sin ningún preprocesamiento 71.89%
+Segunda submission: K=3 con normalización 76.28%
+Tercera submission: K=7, con normalización y elimina variables ["wpt_name","subvillage","scheme_name", "funder", "installer", "ward"]: 77.10%
