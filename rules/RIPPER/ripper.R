@@ -341,7 +341,7 @@ model.Ripper6.pred = predict(model.Ripper6,newdata = test)
 
 generaSubida("6",test$id,model.Ripper6.pred)
 
-# INTENTO 7. RETOMANDO 3 Y PREPROCESANDO FUNDER --> 0.7436
+# INTENTO 7. RETOMANDO 3 Y PREPROCESANDO FUNDER --> 0.7521
 
 model.Ripper7 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
@@ -353,3 +353,7 @@ model.Ripper7.pred = predict(model.Ripper7,newdata = test)
 
 generaSubida("7",test$id,model.Ripper7.pred)
 
+# INTENTO 8. RIPPER DE RKEEL
+library(RKEEL)
+model.Ripper8.RK = RKEEL::Ripper_C(train,test)
+model.Ripper8.RK$run()
