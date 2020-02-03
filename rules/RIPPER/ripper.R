@@ -211,7 +211,7 @@ data$waterpoint_type_group[data$waterpoint_type_group == 'dam'] = 'other'
 data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
 
 # funder
-table(data$funder)
+tabla_funder = table(data$funder)
 data$funder = as.character(data$funder)
 data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
 minoritarios = rownames(tabla_funder[tabla_funder<=150])
@@ -223,9 +223,11 @@ table(data$funder)
 table(data$basin)
 
 #installer
-table(data$installer)
+tabla_installer = table(data$installer)
 data$installer = as.character(data$installer)
 data$installer[data$installer == '' | data$installer == 0 | data$installer == '-'] = 'desconocido'
+minoritarios = rownames(tabla_installer[tabla_installer<=150])
+data$installer[data$installer %in% minoritarios] = "otros"
 data$installer = as.factor(data$installer)
 table(data$installer)
 
