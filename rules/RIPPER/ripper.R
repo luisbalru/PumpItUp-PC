@@ -378,3 +378,14 @@ summary(model.Ripper9)
 model.Ripper9.pred = predict(model.Ripper9,newdata = test)
 
 generaSubida("9",test$id,model.Ripper9.pred)
+
+# INTENTO 10
+model.Ripper10 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+installer+basin+lga+funder+population+antiguedad+
+                       gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                       management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                       waterpoint_type, train)
+
+summary(model.Ripper10)
+model.Ripper10.pred = predict(model.Ripper10,newdata = test)
+
+generaSubida("10",test$id,model.Ripper10.pred)
