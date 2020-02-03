@@ -362,3 +362,19 @@ model.Ripper8 = JRip(status_group~amount_tsh+latitude+longitude+ward+basin+lga+f
                        gps_height+public_meeting+scheme_management+permit+extraction_type_class+management+
                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
                        waterpoint_type, train)
+summary(model.Ripper8)
+model.Ripper8.pred = predict(model.Ripper8,newdata = test)
+
+generaSubida("8",test$id,model.Ripper8.pred)
+
+# INTENTO 9
+
+model.Ripper9 = JRip(status_group~amount_tsh+latitude+longitude+installer+basin+lga+funder+population+antiguedad+
+                             gps_height+public_meeting+scheme_management+permit+extraction_type_class+management+
+                             management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                             waterpoint_type, train)
+
+summary(model.Ripper9)
+model.Ripper9.pred = predict(model.Ripper9,newdata = test)
+
+generaSubida("9",test$id,model.Ripper9.pred)
