@@ -208,7 +208,7 @@ data$public_meeting = as.factor(data$public_meeting)
 tabla_wtg = table(data$waterpoint_type_group)
 data$waterpoint_type_group = as.character(data$waterpoint_type_group)
 data$waterpoint_type_group[data$waterpoint_type_group == 'dam'] = 'other'
-minoritarios = names(tabla_wtg[tabla_wtg<=200])
+minoritarios = names(tabla_wtg[tabla_wtg<=150])
 data$waterpoint_type_group[data$waterpoint_type_group %in% minoritarios] = 'other'
 data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
 
@@ -216,7 +216,7 @@ data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
 tabla_funder = table(data$funder)
 data$funder = as.character(data$funder)
 data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
-minoritarios = names(tabla_funder[tabla_funder<=200])
+minoritarios = names(tabla_funder[tabla_funder<=150])
 data$funder[data$funder %in% minoritarios] = "otros"
 data$funder = as.factor(data$funder)
 table(data$funder)
@@ -228,7 +228,7 @@ table(data$basin)
 tabla_installer = table(data$installer)
 data$installer = as.character(data$installer)
 data$installer[data$installer == '' | data$installer == 0 | data$installer == '-'] = 'desconocido'
-minoritarios = names(tabla_installer[tabla_installer<=200])
+minoritarios = names(tabla_installer[tabla_installer<=150])
 data$installer[data$installer %in% minoritarios] = "otros"
 data$installer = as.factor(data$installer)
 table(data$installer)
@@ -253,6 +253,40 @@ table(data$ward)
 
 # scheme_name
 table(data$scheme_name)
+
+
+################################################
+# TRATAMIENTO DEL DESBALANCEO
+# Balanceo de clases
+table(train$status_group)
+# Vemos que hay un gran desbalanceo
+prop.table(table(train$status_group))
+data$id = NULL
+install.packages("NoiseFiltersR")
+library(NoiseFiltersR)
+# IPF
+salida_ipf = IPF(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
+                   gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                   management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                   waterpoint_type, data = train)
+
+#LVW
+install.packages("FSinR")
+library(FSinR)
+resamplingParams <- list(method = "cv", number = 10) # Values for the caret trainControl function
+fittingParams <- list(preProc = c("center", "scale"), metric="Accuracy", tuneGrid = expand.grid(k = c(1:20)))
+wrapper <- wrapperGenerator("rf", resamplingParams, fittingParams) # wrapper method
+salida_lvw = lvw(salida_ipf$cleanData,'status_group',wrapper,K=15,verbose=TRUE)
+
+# SMOTE
+install.packages("DMwR")
+library(DMwR)
+table(salida_ipf$cleanData$status_group)
+salida_smote = SMOTE(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
+                       gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                       management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                       waterpoint_type, data = salida_ipf$cleanData, perc.over=10000,perc.under=5000)
+
 ################################################
 
 ################################################
@@ -391,3 +425,7 @@ summary(model.Ripper10)
 model.Ripper10.pred = predict(model.Ripper10,newdata = test)
 
 generaSubida("10",test$id,model.Ripper10.pred)
+
+# INTENTO 11 DE NUEVO CON 7
+
+  
