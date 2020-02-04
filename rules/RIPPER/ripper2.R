@@ -139,8 +139,8 @@ resultado_ovun$status_group = as.factor(resultado_ovun$status_group)
 
 # DUMMIES PARA ENN
 install.packages("fastDummies")
-library()
-
+library(fastDummies)
+rovun_dummies = dummy_cols(resultado_ovun)
 
 
 ###############################################################################
@@ -163,3 +163,12 @@ generaSubida("14",test$id,modelo.Ripper14.pred)
 # INTENTO 15: UNDERSAMPLING no va
 modelo.Ripper15 = JRip(status_group~., data=resultado_ovun2)
 summary(modelo.Ripper15)
+
+# INTENTO 16 
+resultado_ovun$date_recorded = NULL
+
+modelo.Ripper16 = JRip(status_group~.,data = resultado_ovun)
+summary(modelo.Ripper16)
+modelo.Ripper16.pred = predict(modelo.Ripper16,newdata = test_pr)
+
+generaSubida("16",test$id,modelo.Ripper16.pred)
