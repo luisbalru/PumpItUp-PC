@@ -1,0 +1,14 @@
+# PRIMERA PASADA - 0.7677
+
+- Variables eliminadas:
+  - id: no proporciona información de clasificación
+  - scheme_name: 28166 valores perdidos (~ 1/2)
+  - Variables categóricas con más de 100 características
+  - recorded_by: 1 única categoría
+  - region_code: muy correlada con district_code
+  - construction_year está correlada con gps_height y tiene valores perdidos
+    (valores con 0)
+
+- Imputación de valores perdidos:
+  - Media para las variables numéricas
+  - Moda para las variables categóricas
