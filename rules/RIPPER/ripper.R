@@ -197,24 +197,29 @@ table(data$permit)
 data$permit = as.character(data$permit)
 data$permit[data$permit == ''] = 'desconocido'
 data$permit = as.factor(data$permit)
+table(data$permit)
 
 # public_meeting
 table(data$public_meeting)
 data$public_meeting = as.character(data$public_meeting)
 data$public_meeting[data$public_meeting == ''] = 'desconocido'
 data$public_meeting = as.factor(data$public_meeting)
+table(data$public_meeting)
 
 # waterpoint_type_group
-table(data$waterpoint_type_group)
+tabla_wtg = table(data$waterpoint_type_group)
 data$waterpoint_type_group = as.character(data$waterpoint_type_group)
 data$waterpoint_type_group[data$waterpoint_type_group == 'dam'] = 'other'
+minoritarios = names(tabla_wtg[tabla_wtg<=150])
+data$waterpoint_type_group[data$waterpoint_type_group %in% minoritarios] = 'other'
 data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
+table(data$waterpoint_type_group)
 
 # funder
 tabla_funder = table(data$funder)
 data$funder = as.character(data$funder)
 data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
-minoritarios = rownames(tabla_funder[tabla_funder<=150])
+minoritarios = names(tabla_funder[tabla_funder<=150])
 data$funder[data$funder %in% minoritarios] = "otros"
 data$funder = as.factor(data$funder)
 table(data$funder)
@@ -226,7 +231,7 @@ table(data$basin)
 tabla_installer = table(data$installer)
 data$installer = as.character(data$installer)
 data$installer[data$installer == '' | data$installer == 0 | data$installer == '-'] = 'desconocido'
-minoritarios = rownames(tabla_installer[tabla_installer<=150])
+minoritarios = names(tabla_installer[tabla_installer<=150])
 data$installer[data$installer %in% minoritarios] = "otros"
 data$installer = as.factor(data$installer)
 table(data$installer)
@@ -247,10 +252,54 @@ table(data$region_code)
 table(data$lga)
 
 # ward
+tabla_ward = table(data$ward)
+data$ward = as.character(data$ward)
+minoritarios = names(tabla_ward[tabla_ward<=60])
+data$ward[data$ward %in% minoritarios] = "otros"
+data$ward = as.factor(data$ward)
 table(data$ward)
 
 # scheme_name
+tabla_sn = table(data$scheme_name)
+data$scheme_name = as.character(data$scheme_name)
+minoritarios = names(tabla_sn[tabla_sn<=200])
+data$scheme_name[data$scheme_name %in% minoritarios] = "otros"
+data$scheme_name = as.factor(data$scheme_name)
 table(data$scheme_name)
+
+################################################
+# TRATAMIENTO DEL DESBALANCEO
+# Balanceo de clases
+test = data %>% filter(status_group == "")
+test$status_group = NULL
+train = data %>% filter(status_group != "")
+train$id = NULL
+train$status_group = as.character(train$status_group)
+train$status_group = as.factor(train$status_group)
+table(train$status_group)
+# Vemos que hay un gran desbalanceo
+prop.table(table(train$status_group))
+
+install.packages("NoiseFiltersR")
+library(NoiseFiltersR)
+# IPF
+salida_ipf = IPF(status_group~., data = train)
+
+#LVW
+install.packages("FSinR")
+library(FSinR)
+resamplingParams <- list(method = "cv", number = 10) # Values for the caret trainControl function
+fittingParams <- list(metric="Accuracy")
+wrapper <- wrapperGenerator("JRip", resamplingParams, fittingParams) # wrapper method
+salida_ipf$cleanData$status_group = as.character(salida_ipf$cleanData$status_group)
+salida_ipf$cleanData$status_group = as.factor(salida_ipf$cleanData$status_group)
+salida_ipf$cleanData$recorded_by = NULL
+salida_lvw = lvw(salida_ipf$cleanData,'status_group',wrapper,K=5,verbose=TRUE)
+
+# SMOTE
+install.packages("smotefamily")
+library(smotefamily)
+salida_smote = SMOTE(salida_ipf$cleanData,'status_group')
 ################################################
 
 ################################################
@@ -389,3 +438,27 @@ summary(model.Ripper10)
 model.Ripper10.pred = predict(model.Ripper10,newdata = test)
 
 generaSubida("10",test$id,model.Ripper10.pred)
+
+# INTENTO 11 DE NUEVO CON 7
+model.Ripper11 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+installer+basin+lga+funder+population+antiguedad+
+                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                        waterpoint_type, salida_ipf$cleanData)
+
+summary(model.Ripper11)
+model.Ripper11.pred = predict(model.Ripper11,newdata = test)
+
+generaSubida("11",test$id,model.Ripper11.pred)
+  
+# INTENTO 12
+
+model.Ripper12 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+installer+basin+lga+funder+population+antiguedad+
+                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                        waterpoint_type, salida_ipf$cleanData)
+
+summary(model.Ripper12)
+model.Ripper12.pred = predict(model.Ripper12,newdata = test)
+
+generaSubida("12",test$id,model.Ripper12.pred)
+
