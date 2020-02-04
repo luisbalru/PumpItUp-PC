@@ -262,6 +262,7 @@ table(data$ward)
 # scheme_name
 tabla_sn = table(data$scheme_name)
 data$scheme_name = as.character(data$scheme_name)
+data$scheme_name[data$scheme_name == ''] = "otros"
 minoritarios = names(tabla_sn[tabla_sn<=200])
 data$scheme_name[data$scheme_name %in% minoritarios] = "otros"
 data$scheme_name = as.factor(data$scheme_name)
@@ -283,18 +284,30 @@ prop.table(table(train$status_group))
 install.packages("NoiseFiltersR")
 library(NoiseFiltersR)
 # IPF
-salida_ipf = IPF(status_group~., data = train)
+train_fnf = train %>% filter(status_group == 'functional' | status_group == 'non functional')
+train_nr = train %>% filter(status_group == 'functional needs repair')
+write.csv(train, "train-proc.csv")
+write.csv(test, "test-proc.csv")
+salida_ipf = IPF(status_group~., data = train_fnf)
+      ipf = rbind(salida_ipf$cleanData,train_nr)
+ipf$recorded_by = NULL
+ipf$date_recorded = NULL
+ipf$num_private = NULL
+ipf$subvillage = NULL
+ipf$district_code = NULL
+ipf$scheme_name = NULL
+ipf$payment_type = NULL
+ipf$quantity = NULL
+ipf$waterpoint_type_group = NULL
+write.csv(ipf,"ipf.csv")
 
 #LVW
 install.packages("FSinR")
 library(FSinR)
-resamplingParams <- list(method = "cv", number = 10) # Values for the caret trainControl function
+resamplingParams <- list(method = "cv", number = 5) # Values for the caret trainControl function
 fittingParams <- list(metric="Accuracy")
-wrapper <- wrapperGenerator("JRip", resamplingParams, fittingParams) # wrapper method
-salida_ipf$cleanData$status_group = as.character(salida_ipf$cleanData$status_group)
-salida_ipf$cleanData$status_group = as.factor(salida_ipf$cleanData$status_group)
-salida_ipf$cleanData$recorded_by = NULL
-salida_lvw = lvw(salida_ipf$cleanData,'status_group',wrapper,K=5,verbose=TRUE)
+wrapper <- wrapperGenerator("rf", resamplingParams, fittingParams) # wrapper method
+salida_lvw = lvw(ipf,'status_group',wrapper,K=5,verbose=TRUE)
 
 # SMOTE
 install.packages("smotefamily")
