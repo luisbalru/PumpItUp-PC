@@ -205,16 +205,18 @@ data$public_meeting[data$public_meeting == ''] = 'desconocido'
 data$public_meeting = as.factor(data$public_meeting)
 
 # waterpoint_type_group
-table(data$waterpoint_type_group)
+tabla_wtg = table(data$waterpoint_type_group)
 data$waterpoint_type_group = as.character(data$waterpoint_type_group)
 data$waterpoint_type_group[data$waterpoint_type_group == 'dam'] = 'other'
+minoritarios = names(tabla_wtg[tabla_wtg<=200])
+data$waterpoint_type_group[data$waterpoint_type_group %in% minoritarios] = 'other'
 data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
 
 # funder
 tabla_funder = table(data$funder)
 data$funder = as.character(data$funder)
 data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
-minoritarios = rownames(tabla_funder[tabla_funder<=150])
+minoritarios = names(tabla_funder[tabla_funder<=200])
 data$funder[data$funder %in% minoritarios] = "otros"
 data$funder = as.factor(data$funder)
 table(data$funder)
@@ -226,7 +228,7 @@ table(data$basin)
 tabla_installer = table(data$installer)
 data$installer = as.character(data$installer)
 data$installer[data$installer == '' | data$installer == 0 | data$installer == '-'] = 'desconocido'
-minoritarios = rownames(tabla_installer[tabla_installer<=150])
+minoritarios = names(tabla_installer[tabla_installer<=200])
 data$installer[data$installer %in% minoritarios] = "otros"
 data$installer = as.factor(data$installer)
 table(data$installer)
