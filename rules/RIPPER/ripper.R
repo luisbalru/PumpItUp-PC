@@ -292,9 +292,12 @@ salida_ipf = IPF(status_group~amount_tsh+latitude+longitude+date_recorded+basin+
 install.packages("FSinR")
 library(FSinR)
 resamplingParams <- list(method = "cv", number = 10) # Values for the caret trainControl function
-fittingParams <- list(preProc = c("center", "scale"), metric="Accuracy")
-wrapper <- wrapperGenerator("rf", resamplingParams, fittingParams) # wrapper method
-salida_lvw = lvw(train,'status_group',wrapper,K=15,verbose=TRUE)
+fittingParams <- list(metric="Accuracy")
+wrapper <- wrapperGenerator("JRip", resamplingParams, fittingParams) # wrapper method
+salida_ipf$cleanData$status_group = as.character(salida_ipf$cleanData$status_group)
+salida_ipf$cleanData$status_group = as.factor(salida_ipf$cleanData$status_group)
+salida_ipf$cleanData$recorded_by = NULL
+salida_lvw = lvw(salida_ipf$cleanData,'status_group',wrapper,K=5,verbose=TRUE)
 
 # SMOTE
 install.packages("DMwR")
