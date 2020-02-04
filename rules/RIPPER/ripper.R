@@ -283,10 +283,7 @@ prop.table(table(train$status_group))
 install.packages("NoiseFiltersR")
 library(NoiseFiltersR)
 # IPF
-salida_ipf = IPF(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
-                   gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
-                   management_group+payment+quality_group+quantity+source+source_type+ source_class+
-                   waterpoint_type, data = train)
+salida_ipf = IPF(status_group~., data = train)
 
 #LVW
 install.packages("FSinR")
@@ -300,14 +297,9 @@ salida_ipf$cleanData$recorded_by = NULL
 salida_lvw = lvw(salida_ipf$cleanData,'status_group',wrapper,K=5,verbose=TRUE)
 
 # SMOTE
-install.packages("DMwR")
-library(DMwR)
-table(salida_ipf$cleanData$status_group)
-salida_smote = SMOTE(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
-                       gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
-                       management_group+payment+quality_group+quantity+source+source_type+ source_class+
-                       waterpoint_type, data = salida_ipf$cleanData, perc.over=10000,perc.under=5000)
-
+install.packages("smotefamily")
+library(smotefamily)
+salida_smote = SMOTE(salida_ipf$cleanData,'status_group')
 ################################################
 
 ################################################
@@ -448,5 +440,25 @@ model.Ripper10.pred = predict(model.Ripper10,newdata = test)
 generaSubida("10",test$id,model.Ripper10.pred)
 
 # INTENTO 11 DE NUEVO CON 7
+model.Ripper11 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+installer+basin+lga+funder+population+antiguedad+
+                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                        waterpoint_type, salida_ipf$cleanData)
 
+summary(model.Ripper11)
+model.Ripper11.pred = predict(model.Ripper11,newdata = test)
+
+generaSubida("11",test$id,model.Ripper11.pred)
   
+# INTENTO 12
+
+model.Ripper12 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+installer+basin+lga+funder+population+antiguedad+
+                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                        waterpoint_type, salida_ipf$cleanData)
+
+summary(model.Ripper12)
+model.Ripper12.pred = predict(model.Ripper12,newdata = test)
+
+generaSubida("12",test$id,model.Ripper12.pred)
+
