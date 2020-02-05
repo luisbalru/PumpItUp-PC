@@ -197,24 +197,29 @@ table(data$permit)
 data$permit = as.character(data$permit)
 data$permit[data$permit == ''] = 'desconocido'
 data$permit = as.factor(data$permit)
+table(data$permit)
 
 # public_meeting
 table(data$public_meeting)
 data$public_meeting = as.character(data$public_meeting)
 data$public_meeting[data$public_meeting == ''] = 'desconocido'
 data$public_meeting = as.factor(data$public_meeting)
+table(data$public_meeting)
 
 # waterpoint_type_group
-table(data$waterpoint_type_group)
+tabla_wtg = table(data$waterpoint_type_group)
 data$waterpoint_type_group = as.character(data$waterpoint_type_group)
 data$waterpoint_type_group[data$waterpoint_type_group == 'dam'] = 'other'
+minoritarios = names(tabla_wtg[tabla_wtg<=150])
+data$waterpoint_type_group[data$waterpoint_type_group %in% minoritarios] = 'other'
 data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
+table(data$waterpoint_type_group)
 
 # funder
-table(data$funder)
+tabla_funder = table(data$funder)
 data$funder = as.character(data$funder)
 data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
-minoritarios = rownames(tabla_funder[tabla_funder<=150])
+minoritarios = names(tabla_funder[tabla_funder<=150])
 data$funder[data$funder %in% minoritarios] = "otros"
 data$funder = as.factor(data$funder)
 table(data$funder)
@@ -223,9 +228,11 @@ table(data$funder)
 table(data$basin)
 
 #installer
-table(data$installer)
+tabla_installer = table(data$installer)
 data$installer = as.character(data$installer)
 data$installer[data$installer == '' | data$installer == 0 | data$installer == '-'] = 'desconocido'
+minoritarios = names(tabla_installer[tabla_installer<=150])
+data$installer[data$installer %in% minoritarios] = "otros"
 data$installer = as.factor(data$installer)
 table(data$installer)
 
@@ -245,10 +252,67 @@ table(data$region_code)
 table(data$lga)
 
 # ward
+tabla_ward = table(data$ward)
+data$ward = as.character(data$ward)
+minoritarios = names(tabla_ward[tabla_ward<=60])
+data$ward[data$ward %in% minoritarios] = "otros"
+data$ward = as.factor(data$ward)
 table(data$ward)
 
 # scheme_name
+tabla_sn = table(data$scheme_name)
+data$scheme_name = as.character(data$scheme_name)
+data$scheme_name[data$scheme_name == ''] = "otros"
+minoritarios = names(tabla_sn[tabla_sn<=200])
+data$scheme_name[data$scheme_name %in% minoritarios] = "otros"
+data$scheme_name = as.factor(data$scheme_name)
 table(data$scheme_name)
+
+################################################
+# TRATAMIENTO DEL DESBALANCEO
+# Balanceo de clases
+test = data %>% filter(status_group == "")
+test$status_group = NULL
+train = data %>% filter(status_group != "")
+train$id = NULL
+train$status_group = as.character(train$status_group)
+train$status_group = as.factor(train$status_group)
+table(train$status_group)
+# Vemos que hay un gran desbalanceo
+prop.table(table(train$status_group))
+
+install.packages("NoiseFiltersR")
+library(NoiseFiltersR)
+# IPF
+train_fnf = train %>% filter(status_group == 'functional' | status_group == 'non functional')
+train_nr = train %>% filter(status_group == 'functional needs repair')
+write.csv(train, "train-proc.csv")
+write.csv(test, "test-proc.csv")
+salida_ipf = IPF(status_group~., data = train_fnf)
+      ipf = rbind(salida_ipf$cleanData,train_nr)
+ipf$recorded_by = NULL
+ipf$date_recorded = NULL
+ipf$num_private = NULL
+ipf$subvillage = NULL
+ipf$district_code = NULL
+ipf$scheme_name = NULL
+ipf$payment_type = NULL
+ipf$quantity = NULL
+ipf$waterpoint_type_group = NULL
+write.csv(ipf,"ipf.csv")
+
+#LVW
+install.packages("FSinR")
+library(FSinR)
+resamplingParams <- list(method = "cv", number = 5) # Values for the caret trainControl function
+fittingParams <- list(metric="Accuracy")
+wrapper <- wrapperGenerator("rf", resamplingParams, fittingParams) # wrapper method
+salida_lvw = lvw(ipf,'status_group',wrapper,K=5,verbose=TRUE)
+
+# SMOTE
+install.packages("smotefamily")
+library(smotefamily)
+salida_smote = SMOTE(salida_ipf$cleanData,'status_group')
 ################################################
 
 ################################################
@@ -341,8 +405,8 @@ model.Ripper6.pred = predict(model.Ripper6,newdata = test)
 
 generaSubida("6",test$id,model.Ripper6.pred)
 
-# INTENTO 7. RETOMANDO 3 Y PREPROCESANDO FUNDER --> 0.7436
-
+# INTENTO 7. RETOMANDO 3 Y PREPROCESANDO FUNDER --> 0.7521
+      
 model.Ripper7 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
@@ -352,4 +416,62 @@ summary(model.Ripper7)
 model.Ripper7.pred = predict(model.Ripper7,newdata = test)
 
 generaSubida("7",test$id,model.Ripper7.pred)
+
+
+# INTENTO 8. A VER QUÉ PASA
+
+model.Ripper8 = JRip(status_group~amount_tsh+latitude+longitude+ward+basin+lga+funder+population+antiguedad+
+                       gps_height+public_meeting+scheme_management+permit+extraction_type_class+management+
+                       management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                       waterpoint_type, train)
+summary(model.Ripper8)
+model.Ripper8.pred = predict(model.Ripper8,newdata = test)
+
+generaSubida("8",test$id,model.Ripper8.pred)
+
+# INTENTO 9
+
+model.Ripper9 = JRip(status_group~amount_tsh+latitude+longitude+installer+basin+lga+funder+population+antiguedad+
+                             gps_height+public_meeting+scheme_management+permit+extraction_type_class+management+
+                             management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                             waterpoint_type, train)
+
+summary(model.Ripper9)
+model.Ripper9.pred = predict(model.Ripper9,newdata = test)
+
+generaSubida("9",test$id,model.Ripper9.pred)
+
+# INTENTO 10
+model.Ripper10 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+installer+basin+lga+funder+population+antiguedad+
+                       gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                       management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                       waterpoint_type, train)
+
+summary(model.Ripper10)
+model.Ripper10.pred = predict(model.Ripper10,newdata = test)
+
+generaSubida("10",test$id,model.Ripper10.pred)
+
+# INTENTO 11 DE NUEVO CON 7
+model.Ripper11 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+installer+basin+lga+funder+population+antiguedad+
+                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                        waterpoint_type, salida_ipf$cleanData)
+
+summary(model.Ripper11)
+model.Ripper11.pred = predict(model.Ripper11,newdata = test)
+
+generaSubida("11",test$id,model.Ripper11.pred)
+  
+# INTENTO 12
+
+model.Ripper12 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+installer+basin+lga+funder+population+antiguedad+
+                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                        waterpoint_type, salida_ipf$cleanData)
+
+summary(model.Ripper12)
+model.Ripper12.pred = predict(model.Ripper12,newdata = test)
+
+generaSubida("12",test$id,model.Ripper12.pred)
 
