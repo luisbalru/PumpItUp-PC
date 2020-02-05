@@ -141,6 +141,32 @@ resultado_ovun$status_group = as.factor(resultado_ovun$status_group)
 install.packages("fastDummies")
 library(fastDummies)
 rovun_dummies = dummy_cols(resultado_ovun)
+rovun_dummies$date_recorded = NULL
+rovun_dummies$funder = NULL
+rovun_dummies$lga = NULL
+rovun_dummies$basin = NULL
+rovun_dummies$public_meeting = NULL
+rovun_dummies$scheme_name = NULL
+rovun_dummies$permit = NULL
+rovun_dummies$extraction_type_class = NULL
+rovun_dummies$management = NULL
+rovun_dummies$management_group = NULL
+rovun_dummies$payment = NULL
+rovun_dummies$quality_group = NULL
+rovun_dummies$quantity = NULL
+rovun_dummies$source = NULL
+rovun_dummies$source_class = NULL
+rovun_dummies$waterpoint_type = NULL
+rovun_dummies$source_type = NULL
+library(NoiseFiltersR)
+
+range01 = function(x){
+  return((x-min(x))/(max(x)-min(x)))
+}
+rovun_dummies[,1:5] = apply(rovun_dummies[,1:5],2,range01)
+# res_enn = ENN(status_group~.,data=rovun_dummies,k=5)
+# Paso a Python
+write.csv(rovun_dummies,"rovun_dummies.csv")
 
 
 ###############################################################################
