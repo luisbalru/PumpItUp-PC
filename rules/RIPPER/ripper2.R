@@ -157,19 +157,21 @@ train_pr$class = as.factor(train_pr$class)
 train_pr$id=NULL
 test_pr$id=NULL
 
+write.csv(train_pr, "para_rus.csv", row.names = F)
+# Paso a PYTHON para undersampling o smote
+######################
+#oversampling = ovun.sample(class~.-status_group, p=0.4, train_pr,seed=77145416)
+#resultado_ovun = oversampling$data
+#resultado_ovun$class = NULL
+#undersampling = ovun.sample(class~.-status_group, p=0.4, method="under", train_pr,seed=77145416)
+#resultado_ovun2 = undersampling$data
 
-oversampling = ovun.sample(class~.-status_group, p=0.4, train_pr,seed=77145416)
-resultado_ovun = oversampling$data
-resultado_ovun$class = NULL
-undersampling = ovun.sample(class~.-status_group, p=0.4, method="under", train_pr,seed=77145416)
-resultado_ovun2 = undersampling$data
+#resultado_ovun2$class = NULL
+#resultado_ovun2$status_group = as.character(resultado_ovun2$status_group)
+#resultado_ovun2$status_group = as.factor(resultado_ovun2$status_group)
 
-resultado_ovun2$class = NULL
-resultado_ovun2$status_group = as.character(resultado_ovun2$status_group)
-resultado_ovun2$status_group = as.factor(resultado_ovun2$status_group)
-
-resultado_ovun$status_group = as.character(resultado_ovun$status_group)
-resultado_ovun$status_group = as.factor(resultado_ovun$status_group)
+#resultado_ovun$status_group = as.character(resultado_ovun$status_group)
+#resultado_ovun$status_group = as.factor(resultado_ovun$status_group)
 
 
 library(NoiseFiltersR)
@@ -179,6 +181,7 @@ range01 = function(x){
 }
 test_pr[,1:5] = apply(test_pr[,1:5],2,range01)
 resultado_ovun[,]
+
 # res_enn = ENN(status_group~.,data=rovun_dummies,k=5)
 # Paso a Python
 write.csv(rovun_dummies,"rovun_dummies.csv", row.names = F)
@@ -214,11 +217,16 @@ modelo.Ripper16.pred = predict(modelo.Ripper16,newdata = test_pr)
 
 generaSubida("16",test$id,modelo.Ripper16.pred)
 
-# INTENTO 17
-
-modelo.Ripper17 = JRip(status_group~.,data = res_enn)
+# INTENTO 17 --> RUS en python
+res_rus = read.csv("tras_rus.csv")
+colnames(test_pr) =gsub("(gmbh)",".gmbh.",test_pr)
+modelo.Ripper17 = JRip(status_group~.,data = res_rus)
 summary(modelo.Ripper17)
-modelo.Ripper17.pred = predict(modelo.Ripper17,newdata = dummies_enn_test)
+modelo.Ripper17.pred = predict(modelo.Ripper17,newdata = test_pr)
 
 generaSubida("17",test$id,modelo.Ripper17.pred)
+
+# INTENTO 18 --> SMOTE + ENN
+
+
 
