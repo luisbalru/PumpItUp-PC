@@ -16,7 +16,7 @@ from imblearn.over_sampling import SMOTE
 
 types = {
     "id" : "int",
-    "amount_tsh" : "float",
+    ##"amount_tsh" : "float",
     "date_recorded" : "datetime64",
     #"funder" : "str",
     "gps_height" : "float",
@@ -24,7 +24,7 @@ types = {
     "longitude" : "float",
     "latitude" : "float",
     #"wpt_name" : "str",
-    "num_private" : "int",
+    ##"num_private" : "int",
     "basin" : "str",
     #"subvillage" : "str",
     "region" : "str",
@@ -32,9 +32,9 @@ types = {
     "district_code" : "int",
     "lga" : "str",
     #"ward" : "str",
-    "population" : "int",
+    ##"population" : "int",
     "public_meeting" : "bool",
-    "recorded_by" : "str",
+    ##"recorded_by" : "str",
     "scheme_management" : "str",
     #"scheme_name" : "str",
     "permit" : "bool",
@@ -65,7 +65,7 @@ categorical_columns = [#"funder",
                         "region",
                         "lga",
                         #"ward",
-                        "recorded_by",
+                        ##"recorded_by",
                         "scheme_management",
                         #"scheme_name",
                         "extraction_type",
@@ -156,7 +156,14 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
 
     data = pd.concat([data_train, data_test])
 
-    data = data.drop(columns=["wpt_name","subvillage","scheme_name", "funder", "installer", "ward"])
+    data = data.drop(columns=["wpt_name","subvillage","scheme_name", "funder", "installer", "ward", "amount_tsh", "num_private", "recorded_by"])
+
+    # Pasamos los datos perdidos a nan
+    data["gps_height"][data["gps_height"]==0]=np.nan
+    data["longitude"][data["longitude"]==0]=np.nan
+    data["latitude"][data["latitude"]==-2e-8]=np.nan
+    data["population"][data["population"]==0]=np.nan
+    data["construction_year"][data["construction_year"]==0]=np.nan
 
     # Convertimos la fecha a float
     min_date = data["date_recorded"].min()
@@ -185,6 +192,7 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
     for cat in categorical_columns:
         data[cat] = pd.Categorical(data[cat].cat.codes)
 
+    print("Imputando datos...")
     data = pd.DataFrame(IterativeImputer().fit_transform(data), columns=data.keys())
 
     data = pd.get_dummies(data,prefix=categorical_columns, columns=categorical_columns)

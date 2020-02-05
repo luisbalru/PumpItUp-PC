@@ -31,6 +31,7 @@ f1s = []
 tiempos = []
 
 possibleK = [1,3,5,7,9,11]
+possibleK=[7]
 X,y, _ = preprocessing.readData()
 print("El conjunto de datos tiene dimension: " + str(len(X.iloc[0])))
 
