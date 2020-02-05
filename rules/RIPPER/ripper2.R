@@ -112,35 +112,11 @@ data$scheme_name[data$scheme_name %in% minoritarios] = "otros"
 data$scheme_name = as.factor(data$scheme_name)
 table(data$scheme_name)
 
-install.packages("ROSE")
-library(ROSE)
-train_pr = data %>% filter(status_group != '')
-test_pr = data %>% filter(status_group == '')
-test_pr$status_group = NULL
-train_pr$class = train_pr$status_group
-train_pr$class = as.character(train_pr$class)
-train_pr$class[train_pr$status_group == "functional" | train_pr$status_group == "non functional"] = 'mayoritaria'
-train_pr$class = as.factor(train_pr$class)
-train_pr$id=NULL
-test_pr$id=NULL
-
-oversampling = ovun.sample(class~.-status_group, p=0.4, train_pr,seed=77145416)
-resultado_ovun = oversampling$data
-resultado_ovun$class = NULL
-undersampling = ovun.sample(class~.-status_group, p=0.4, method="under", train_pr,seed=77145416)
-resultado_ovun2 = undersampling$data
-
-resultado_ovun2$class = NULL
-resultado_ovun2$status_group = as.character(resultado_ovun2$status_group)
-resultado_ovun2$status_group = as.factor(resultado_ovun2$status_group)
-
-resultado_ovun$status_group = as.character(resultado_ovun$status_group)
-resultado_ovun$status_group = as.factor(resultado_ovun$status_group)
-
 # DUMMIES PARA ENN
 install.packages("fastDummies")
 library(fastDummies)
-rovun_dummies = dummy_cols(resultado_ovun)
+
+rovun_dummies = dummy_cols(data)
 rovun_dummies$date_recorded = NULL
 rovun_dummies$funder = NULL
 rovun_dummies$lga = NULL
@@ -158,16 +134,55 @@ rovun_dummies$source = NULL
 rovun_dummies$source_class = NULL
 rovun_dummies$waterpoint_type = NULL
 rovun_dummies$source_type = NULL
+colnames(rovun_dummies) = gsub(" ", "_", colnames(rovun_dummies))
+colnames(rovun_dummies) = gsub("/","",colnames(rovun_dummies))
+rovun_dummies$status_group_ = NULL
+rovun_dummies$status_group_functional = NULL
+rovun_dummies$status_group_functionalneedsrepair = NULL
+rovun_dummies$status_group_nonfunctional = NULL
+rovun_dummies$status_group_non_functional = NULL
+rovun_dummies$status_group_functional_needs_repair = NULL
+
+
+### oversampling
+install.packages("ROSE")
+library(ROSE)
+train_pr = rovun_dummies %>% filter(status_group != '')
+test_pr = rovun_dummies %>% filter(status_group == '')
+test_pr$status_group = NULL
+train_pr$class = train_pr$status_group
+train_pr$class = as.character(train_pr$class)
+train_pr$class[train_pr$status_group == "functional" | train_pr$status_group == "non functional"] = 'mayoritaria'
+train_pr$class = as.factor(train_pr$class)
+train_pr$id=NULL
+test_pr$id=NULL
+
+
+oversampling = ovun.sample(class~.-status_group, p=0.4, train_pr,seed=77145416)
+resultado_ovun = oversampling$data
+resultado_ovun$class = NULL
+undersampling = ovun.sample(class~.-status_group, p=0.4, method="under", train_pr,seed=77145416)
+resultado_ovun2 = undersampling$data
+
+resultado_ovun2$class = NULL
+resultado_ovun2$status_group = as.character(resultado_ovun2$status_group)
+resultado_ovun2$status_group = as.factor(resultado_ovun2$status_group)
+
+resultado_ovun$status_group = as.character(resultado_ovun$status_group)
+resultado_ovun$status_group = as.factor(resultado_ovun$status_group)
+
+
 library(NoiseFiltersR)
 
 range01 = function(x){
   return((x-min(x))/(max(x)-min(x)))
 }
-rovun_dummies[,1:5] = apply(rovun_dummies[,1:5],2,range01)
+test_pr[,1:5] = apply(test_pr[,1:5],2,range01)
+resultado_ovun[,]
 # res_enn = ENN(status_group~.,data=rovun_dummies,k=5)
 # Paso a Python
-write.csv(rovun_dummies,"rovun_dummies.csv")
-
+write.csv(rovun_dummies,"rovun_dummies.csv", row.names = F)
+res_enn = read.csv("dataset-enn.csv")
 
 ###############################################################################
 # INTENTO 13
@@ -198,3 +213,12 @@ summary(modelo.Ripper16)
 modelo.Ripper16.pred = predict(modelo.Ripper16,newdata = test_pr)
 
 generaSubida("16",test$id,modelo.Ripper16.pred)
+
+# INTENTO 17
+
+modelo.Ripper17 = JRip(status_group~.,data = res_enn)
+summary(modelo.Ripper17)
+modelo.Ripper17.pred = predict(modelo.Ripper17,newdata = dummies_enn_test)
+
+generaSubida("17",test$id,modelo.Ripper17.pred)
+
