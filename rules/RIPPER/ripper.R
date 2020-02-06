@@ -306,10 +306,13 @@ install.packages("FSinR")
 library(FSinR)
 resamplingParams <- list(method = "cv", number = 5) # Values for the caret trainControl function
 fittingParams <- list(metric="Accuracy")
-wrapper <- wrapperGenerator("rf", resamplingParams, fittingParams) # wrapper method
+wrapper <- wrapperGenerator("C4.5", resamplingParams, fittingParams) # wrapper method
 salida_lvw = lvw(ipf,'status_group',wrapper,K=5,verbose=TRUE)
 
 # SMOTE
+install.packages("fastDummies")
+library("fastDummies")
+ipf.dummies = dummy_cols(ipf)
 install.packages("smotefamily")
 library(smotefamily)
 salida_smote = SMOTE(salida_ipf$cleanData,'status_group')

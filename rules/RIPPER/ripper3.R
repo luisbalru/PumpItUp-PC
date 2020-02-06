@@ -74,6 +74,18 @@ ggplot(subset(train, construction_year > 0), aes(x =construction_year)) +
 
 # Limpieza de datos
 
+# Train --> construction_year
+
+train$construction_year[train$construction_year == 0 & train$status_group == 'functional'] = round(mean(train$construction_year[train$construction_year != 0 & train$status_group == 'functional']))
+train$construction_year[train$construction_year == 0 & train$status_group == 'non functional'] = round(mean(train$construction_year[train$construction_year != 0 & train$status_group == 'non functional']))
+train$construction_year[train$construction_year == 0 & train$status_group == 'functional needs repair'] = round(mean(train$construction_year[train$construction_year != 0 & train$status_group == 'functional needs repair']))
+
+antigua_subida = read.csv("new.csv")
+test = merge(test,antigua_subida,by='id')
+
+test$construction_year[test$construction_year == 0 & test$status_group == 'functional'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'functional']))
+test$construction_year[test$construction_year == 0 & test$status_group == 'non functional'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'non functional']))
+test$construction_year[test$construction_year == 0 & test$status_group == 'functional needs repair'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'functional needs repair']))
 # Creación de la variable estado en el test para que
 # coincidan en número a la hora de hacer transformaciones
 test$status_group = ""
@@ -375,4 +387,16 @@ model.Ripper19 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+b
 summary(model.Ripper19)
 model.Ripper19.pred = predict(model.Ripper19,newdata = test)
 
-generaSubida("18",test$id,model.Ripper19.pred)
+generaSubida("19",test$id,model.Ripper19.pred)
+
+# INTENTO 20
+
+model.Ripper20 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
+                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                        waterpoint_type, train, control = Weka_control(F = 9, N=8.0,O=20))
+
+summary(model.Ripper20)
+model.Ripper20.pred = predict(model.Ripper20,newdata = test)
+
+generaSubida("20",test$id,model.Ripper20.pred)
