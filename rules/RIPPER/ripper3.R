@@ -341,7 +341,7 @@ generaSubida("6",test$id,model.Ripper6.pred)
 model.Ripper7 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
-                       waterpoint_type, train, control = Weka_control(F = 9, N=8.0,O=20))
+                       waterpoint_type, train, control = Weka_control(F = 9, N=8.0,O=10))
 
 summary(model.Ripper7)
 model.Ripper7.pred = predict(model.Ripper7,newdata = test)
@@ -350,18 +350,29 @@ generaSubida("7",test$id,model.Ripper7.pred)
 
 # INTENTO 18
 
-non_functional = train %>% filter(status_group != 'functional needs repair')
-non_functional$status_group = as.character(non_functional$status_group)
-non_functional$status_group = as.factor(non_functional$status_group)
-
-
 model.Ripper18 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
-                       gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
-                       management_group+payment+quality_group+quantity+source+source_type+ source_class+
-                       waterpoint_type, train, control = Weka_control(F = 9, N=8.0,O=20))
+                           gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                           management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                           waterpoint_type, train, control = Weka_control(F = 9, N=8.0,O=20))
 
 summary(model.Ripper18)
 model.Ripper18.pred = predict(model.Ripper18,newdata = test)
 
 generaSubida("18",test$id,model.Ripper18.pred)
 
+# 19
+
+non_functional = train %>% filter(status_group != 'functional needs repair')
+non_functional$status_group = as.character(non_functional$status_group)
+non_functional$status_group = as.factor(non_functional$status_group)
+
+
+model.Ripper19 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
+                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                        waterpoint_type, non_functional, control = Weka_control(F = 9, N=8.0,O=20))
+
+summary(model.Ripper19)
+model.Ripper19.pred = predict(model.Ripper19,newdata = test)
+
+generaSubida("18",test$id,model.Ripper19.pred)
