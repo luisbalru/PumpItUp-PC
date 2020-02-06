@@ -2,13 +2,13 @@
 # RIPPER: PREPROCESAMIENTO Y CLASIFICACIÓN     #
 # Autor: Luis Balderas Ruiz                    #
 ################################################
-
+options(java.parameters = "-Xmx13g")
 library(RWeka)
 library(ggplot2)
 library(rpart)
 library(dplyr)
 
-#options(java.parameters = "-Xmx30g") 
+
 ###############################################
 # FUNCIONES PROPIAS
 generaSubida = function(numero, test_id, prediccion){
@@ -17,7 +17,7 @@ generaSubida = function(numero, test_id, prediccion){
   submission$status_group = prediccion
   colnames(submission) = c("id", "status_group")
   write.csv(submission,file=nombre, row.names = FALSE)
-  
+
 }
 
 # Lectura de datos
@@ -28,46 +28,7 @@ train = merge(train, labels)
 
 
 
-
-################################################
-# EXPLORACIÓN DE DATOS
-
-# Balanceo de clases
-table(train$status_group)
-# Vemos que hay un gran desbalanceo
-prop.table(table(train$status_group))
-
-# Gráfica de barras por cantidad
-qplot(quantity, data=train, geom="bar", fill=status_group) + 
-  theme(legend.position = "top")
-qplot(status_group, data=train, geom="bar", fill=quantity) + 
-  theme(legend.position = "top")
-
-
-# Gráfica de barras para quality_group
-qplot(quality_group, data=train, geom="bar", fill=status_group) + 
-  theme(legend.position = "top")
-
-# Gráfica de barras para waterpoint_type
-qplot(waterpoint_type, data=train, geom="bar", fill=status_group) + 
-  theme(legend.position = "top") + 
-  theme(axis.text.x=element_text(angle = -20, hjust = 0))
-#################################################################################
-# Variables continuas
-
-# Historgrama para construction_year agrupado por status_group
-ggplot(train, aes(x = construction_year)) + 
-  geom_histogram(bins = 20) + 
-  facet_grid( ~ status_group)
-
-# Agrupando con construction_year > 0
-ggplot(subset(train, construction_year > 0), aes(x =construction_year)) +
-  geom_histogram(bins = 20) + 
-  facet_grid( ~ status_group)
-
-
-################################################
-
+# EXPLORACIÓN ...
 
 ################################################
 # PREPROCESAMIENTO
@@ -81,7 +42,7 @@ train$construction_year[train$construction_year == 0 & train$status_group == 'no
 train$construction_year[train$construction_year == 0 & train$status_group == 'functional needs repair'] = round(mean(train$construction_year[train$construction_year != 0 & train$status_group == 'functional needs repair']))
 
 antigua_subida = read.csv("new.csv")
-test = merge(test,antigua_subida,by='id')
+test = cbind(test, status_group=antigua_subida$status_group)
 
 test$construction_year[test$construction_year == 0 & test$status_group == 'functional'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'functional']))
 test$construction_year[test$construction_year == 0 & test$status_group == 'non functional'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'non functional']))
@@ -175,7 +136,7 @@ length(data$population[data$population==0])
 hist(data$population[data$population>5000])
 # Apenas hay zonas con más de 10000 personas alrededor de la fuente
 hist(data$population[data$population>10000])
-# Utilizo la media para los MV 
+# Utilizo la media para los MV
 data$population[data$population==0] = round(mean(data$population[data$population!=0]),digits = 0)
 hist(data$population)
 table(data$population)
@@ -223,7 +184,7 @@ data$waterpoint_type_group[data$waterpoint_type_group == 'dam'] = 'other'
 data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
 
 # funder
-table(data$funder)
+tabla_funder = table(data$funder)
 data$funder = as.character(data$funder)
 data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
 minoritarios = rownames(tabla_funder[tabla_funder<=150])
@@ -263,14 +224,7 @@ table(data$ward)
 table(data$scheme_name)
 ################################################
 
-################################################
-# Correlación
-# No se muestran correlaciones entre las variables numéricas
-variables_numericas = subset(data, select=c(amount_tsh, gps_height, longitude, latitude))
-cor(variables_numericas)
-
-
-
+# CORRELACIÓN
 
 
 ################################################
@@ -281,113 +235,7 @@ fin = nrow(data)
 train = data[1:(inicio_test-1),]
 test = data[inicio_test:fin,]
 
-
-# INTENTO 1. TODAS LAS VARIABLES. ERROR DE MEMORIA EN HEAP. Necesario seleccionar variables
-
-model.Ripper1 = JRip(status_group~.-id, train)
-
-# INTENTO 2. QUITO VARIABLES CON MÁS OUTLIERS SIN POSIBILIDAD DE ARREGLAR Y LAS REPETIDAS (A MI JUICIO) --> 0.7420 
-
-model.Ripper2 = JRip(status_group~amount_tsh+latitude+longitude+basin+lga+ward+region+population+antiguedad+
-                      gps_height+public_meeting+scheme_management+permit+extraction_type_class+
-                      management_group+quality_group+quantity_group+source_type+ source_class+
-                      waterpoint_type_group, train)
-
-summary(model.Ripper2)
-
-
-model.Ripper2.pred = predict(model.Ripper2, newdata = test)
-submission_int2 = data.frame(test$id)
-submission_int2$status_group = model.Ripper2.pred
-colnames(submission_int2) = c("id", "status_group")
-write.csv(submission_int2,file="submission_int2.csv", row.names = FALSE)
-
-# INTENTO 3. MODIFICACIÓN EN UNA VARIABLE --> 0.7455 
-
-model.Ripper3 = JRip(status_group~amount_tsh+latitude+longitude+basin+region+population+antiguedad+
-                       gps_height+public_meeting+scheme_management+permit+extraction_type_class+
-                       management_group+quality_group+quantity_group+source_type+ source_class+
-                       waterpoint_type_group, train)
-
-summary(model.Ripper3)
-model.Ripper3.pred = predict(model.Ripper3,newdata = test)
-
-generaSubida("3",test$id,model.Ripper3.pred)
-
-# INTENTO 4. REDUCCIÓN DRÁSTICA DE VARIABLES --> Peor resultado: 0.7325
-
-model.Ripper4 = JRip(status_group~amount_tsh+latitude+longitude+population+antiguedad+
-                       gps_height+extraction_type_class+quantity_group+waterpoint_type_group, train)
-
-summary(model.Ripper4)
-model.Ripper4.pred = predict(model.Ripper4,newdata = test)
-
-generaSubida("4",test$id,model.Ripper4.pred)
-
-# INTENTO 5. RETOMANDO 3 Y PREPROCESANDO FUNDER -->0.7457
-
-model.Ripper5 = JRip(status_group~amount_tsh+latitude+longitude+basin+region+funder+population+antiguedad+
-                       gps_height+public_meeting+scheme_management+permit+extraction_type_class+
-                       management_group+quality_group+quantity_group+source_type+ source_class+
-                       waterpoint_type_group, train)
-
-summary(model.Ripper5)
-model.Ripper5.pred = predict(model.Ripper5,newdata = test)
-
-generaSubida("5",test$id,model.Ripper5.pred)
-
-# INTENTO 6. RETOMANDO 5, ELIMINANDO PERMIT Y PUBLIC_MEETING --> 0.7436
-
-model.Ripper6 = JRip(status_group~amount_tsh+latitude+longitude+basin+region+funder+population+antiguedad+
-                       gps_height+scheme_management+permit+extraction_type_class+
-                       management_group+quality_group+quantity_group+source_type+ source_class+
-                       waterpoint_type_group, train)
-
-summary(model.Ripper6)
-model.Ripper6.pred = predict(model.Ripper6,newdata = test)
-
-generaSubida("6",test$id,model.Ripper6.pred)
-
-# INTENTO 7. RETOMANDO 3 Y PREPROCESANDO FUNDER --> 0.7436
-
-model.Ripper7 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
-                       gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
-                       management_group+payment+quality_group+quantity+source+source_type+ source_class+
-                       waterpoint_type, train, control = Weka_control(F = 9, N=8.0,O=10))
-
-summary(model.Ripper7)
-model.Ripper7.pred = predict(model.Ripper7,newdata = test)
-
-generaSubida("7",test$id,model.Ripper7.pred)
-
-# INTENTO 18
-
-model.Ripper18 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
-                           gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
-                           management_group+payment+quality_group+quantity+source+source_type+ source_class+
-                           waterpoint_type, train, control = Weka_control(F = 9, N=8.0,O=20))
-
-summary(model.Ripper18)
-model.Ripper18.pred = predict(model.Ripper18,newdata = test)
-
-generaSubida("18",test$id,model.Ripper18.pred)
-
-# 19
-
-non_functional = train %>% filter(status_group != 'functional needs repair')
-non_functional$status_group = as.character(non_functional$status_group)
-non_functional$status_group = as.factor(non_functional$status_group)
-
-
-model.Ripper19 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+
-                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
-                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
-                        waterpoint_type, non_functional, control = Weka_control(F = 9, N=8.0,O=20))
-
-summary(model.Ripper19)
-model.Ripper19.pred = predict(model.Ripper19,newdata = test)
-
-generaSubida("19",test$id,model.Ripper19.pred)
+# MODELOS INTERMEDIOS
 
 # INTENTO 20
 
