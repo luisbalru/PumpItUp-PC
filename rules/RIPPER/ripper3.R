@@ -2,7 +2,7 @@
 # RIPPER: PREPROCESAMIENTO Y CLASIFICACIÓN     #
 # Autor: Luis Balderas Ruiz                    #
 ################################################
-options(java.parameters = "-Xmx13g")
+options(java.parameters = "-Xmx55g")
 library(RWeka)
 library(ggplot2)
 library(rpart)
@@ -11,6 +11,11 @@ library(dplyr)
 
 ###############################################
 # FUNCIONES PROPIAS
+
+Accuracy = function(pred,etiq){
+  return(length(pred[pred == etiq])/length(pred))
+}
+
 generaSubida = function(numero, test_id, prediccion){
   nombre = paste("submission_int",numero,".csv", sep="")
   submission = data.frame(test_id)
@@ -239,12 +244,46 @@ test = data[inicio_test:fin,]
 
 # INTENTO 20
 
-model.Ripper20 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
+
+#model.Ripper20 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
+ #                       gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+  #                      management_group+payment+quality_group+quantity+source+source_type+ source_class+
+   #                     waterpoint_type, train, control = Weka_control(F = 9, N=8.0,O=20))
+
+#summary(model.Ripper20)
+#model.Ripper20.pred = predict(model.Ripper20,newdata = test)
+
+#generaSubida("20",test$id,model.Ripper20.pred)
+
+# 10-CV GRID SEARCH
+accuracies = c()
+for(f in 1:15){
+  #print(paste("F: ", f))
+  for(n in seq(2,15,0.5)){
+    #print(paste("N: ", n))
+    for(o in 2:30){
+      #print(paste("O: ",o))
+      train = train[sample(nrow(train)),]
+      folds = cut(seq(1,nrow(train)), breaks=5, labels=FALSE)
+      suma_acc = 0
+      for(i in 1:5){
+        testIndexes = which(folds==i, arr.ind=T)
+        testData = train[testIndexes,]
+        etiquetas = testData$status_group
+        testData$status_group = NULL
+        trainData = train[-testIndexes,]
+        modelo = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
                         gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
                         management_group+payment+quality_group+quantity+source+source_type+ source_class+
-                        waterpoint_type, train, control = Weka_control(F = 9, N=8.0,O=20))
-
-summary(model.Ripper20)
-model.Ripper20.pred = predict(model.Ripper20,newdata = test)
-
-generaSubida("20",test$id,model.Ripper20.pred)
+                        waterpoint_type, trainData, control = Weka_control(F = f, N= n,O=o))
+        prediccion = predict(modelo, newdata=testData)
+        suma_acc = suma_acc + Accuracy(prediccion,etiquetas)
+      }
+      suma_acc = suma_acc/5
+      res = paste("F:", f, ",N:", n, ",O:", o,",Acc:", suma_acc,";", sep="")
+      print(res)
+      accuracies = append(accuracies,suma_acc)
+    }
+  }
+}
+write(accuracies, file="resultados.txt", sep=',')
