@@ -2,7 +2,7 @@
 # RIPPER: PREPROCESAMIENTO Y CLASIFICACIÓN     #
 # Autor: Luis Balderas Ruiz                    #
 ################################################
-#options(java.parameters = "-Xmx55g")
+options(java.parameters = "-Xmx8g")
 library(RWeka)
 library(ggplot2)
 library(rpart)
@@ -213,7 +213,7 @@ data$scheme_name = NULL
 
 ###
 # PCA
-
+install.packages("fastDummies")
 library(fastDummies)
 data$num_private = NULL
 data$subvillage = NULL
