@@ -192,7 +192,7 @@ data$waterpoint_type_group = as.factor(data$waterpoint_type_group)
 tabla_funder = table(data$funder)
 data$funder = as.character(data$funder)
 data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
-minoritarios = rownames(tabla_funder[tabla_funder<=150])
+minoritarios = names(tabla_funder[tabla_funder<=150])
 data$funder[data$funder %in% minoritarios] = "otros"
 data$funder = as.factor(data$funder)
 table(data$funder)
@@ -207,16 +207,31 @@ data$installer[data$installer == '' | data$installer == 0 | data$installer == '-
 data$installer = as.factor(data$installer)
 table(data$installer)
 
-data$date_recorded = NULL
-data$scheme_name = NULL
+#data$date_recorded = NULL
+#data$scheme_name = NULL
 
 
 ###
 # PCA
-install.packages("fastDummies")
-library(fastDummies)
-data$num_private = NULL
-data$subvillage = NULL
-data$district_code = NULL
-dummies = dummy_cols(data, select_columns = c("funder","installer","wpt_name","basin","region","region_code","lga","ward","public_meeting","recorded_by","scheme_management","permit","extraction_type","extraction_type_group","extraction_type_class","management","management_group","payment","payment_type","water_quality","quality_group","quantity","quantity_group","source","source_type","source_class","waterpoint_type","waterpoint_type_group"))
-print(colnames(dummies))
+#install.packages("fastDummies")
+#library(fastDummies)
+#data$num_private = NULL
+#data$subvillage = NULL
+#data$district_code = NULL
+#dummies = dummy_cols(data, select_columns = c("funder","installer","wpt_name","basin","region","region_code","lga","ward","public_meeting","recorded_by","scheme_management","permit","extraction_type","extraction_type_group","extraction_type_class","management","management_group","payment","payment_type","water_quality","quality_group","quantity","quantity_group","source","source_type","source_class","waterpoint_type","waterpoint_type_group"))
+#print(colnames(dummies))
+
+inicio_test = nrow(train) + 1
+fin = nrow(data)
+train = data[1:(inicio_test-1),]
+test = data[inicio_test:fin,]
+# F = 2, N = 3, O = 29 en 10CV accuracy de 0.843922558922559
+model.Ripper21 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
+                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+                        waterpoint_type, train, control = Weka_control(F = 2, N=3,O=29))
+
+summary(model.Ripper21)
+model.Ripper21.pred = predict(model.Ripper21,newdata = test)
+
+generaSubida("21",test$id,model.Ripper21.pred)
