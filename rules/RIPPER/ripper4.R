@@ -2,7 +2,7 @@
 # RIPPER: PREPROCESAMIENTO Y CLASIFICACIÓN     #
 # Autor: Luis Balderas Ruiz                    #
 ################################################
-options(java.parameters = "-Xmx55g")
+#options(java.parameters = "-Xmx55g")
 library(RWeka)
 library(ggplot2)
 library(rpart)
@@ -206,3 +206,17 @@ data$installer = as.character(data$installer)
 data$installer[data$installer == '' | data$installer == 0 | data$installer == '-'] = 'desconocido'
 data$installer = as.factor(data$installer)
 table(data$installer)
+
+data$date_recorded = NULL
+data$scheme_name = NULL
+
+
+###
+# PCA
+
+library(fastDummies)
+data$num_private = NULL
+data$subvillage = NULL
+data$district_code = NULL
+dummies = dummy_cols(data, select_columns = c("funder","installer","wpt_name","basin","region","region_code","lga","ward","public_meeting","recorded_by","scheme_management","permit","extraction_type","extraction_type_group","extraction_type_class","management","management_group","payment","payment_type","water_quality","quality_group","quantity","quantity_group","source","source_type","source_class","waterpoint_type","waterpoint_type_group"))
+print(colnames(dummies))
