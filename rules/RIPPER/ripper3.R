@@ -256,12 +256,12 @@ test = data[inicio_test:fin,]
 #generaSubida("20",test$id,model.Ripper20.pred)
 
 # 10-CV GRID SEARCH
-accuracies = c()
-for(f in 1:15){
+f = file('resultados.txt')
+for(f in 15:1){
   #print(paste("F: ", f))
-  for(n in seq(2,15,0.5)){
+  for(n in seq(15,7,-1)){
     #print(paste("N: ", n))
-    for(o in 2:30){
+    for(o in 30:10){
       #print(paste("O: ",o))
       train = train[sample(nrow(train)),]
       folds = cut(seq(1,nrow(train)), breaks=5, labels=FALSE)
@@ -280,10 +280,10 @@ for(f in 1:15){
         suma_acc = suma_acc + Accuracy(prediccion,etiquetas)
       }
       suma_acc = suma_acc/5
-      res = paste("F:", f, ",N:", n, ",O:", o,",Acc:", suma_acc,";", sep="")
-      print(res)
+      res = paste("F:", f, ",N:", n, ",O:", o,",Acc:", suma_acc,"\n", sep="")
+      writeLines(res,f)
       accuracies = append(accuracies,suma_acc)
     }
   }
 }
-write(accuracies, file="resultados.txt", sep=',')
+close(f)
