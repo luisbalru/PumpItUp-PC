@@ -52,6 +52,18 @@ test = cbind(test, status_group=antigua_subida$status_group)
 test$construction_year[test$construction_year == 0 & test$status_group == 'functional'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'functional']))
 test$construction_year[test$construction_year == 0 & test$status_group == 'non functional'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'non functional']))
 test$construction_year[test$construction_year == 0 & test$status_group == 'functional needs repair'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'functional needs repair']))
+
+ # train y test para amount_tsh
+
+ train$amount_tsh[train$amount_tsh == 0 & train$status_group == 'functional'] = round(mean(train$amount_tsh[train$amount_tsh != 0 & train$status_group == 'functional']))
+ train$amount_tsh[train$amount_tsh == 0 & train$status_group == 'non functional'] = round(mean(train$amount_tsh[train$amount_tsh != 0 & train$status_group == 'non functional']))
+ train$amount_tsh[train$amount_tsh == 0 & train$status_group == 'functional needs repair'] = round(mean(train$amount_tsh[train$amount_tsh != 0 & train$status_group == 'functional needs repair']))
+
+ test$amount_tsh[test$amount_tsh == 0 & test$status_group == 'functional'] = round(mean(test$amount_tsh[test$amount_tsh != 0 & test$status_group == 'functional']))
+ test$amount_tsh[test$amount_tsh == 0 & test$status_group == 'non functional'] = round(mean(test$amount_tsh[test$amount_tsh != 0 & test$status_group == 'non functional']))
+ test$amount_tsh[test$amount_tsh == 0 & test$status_group == 'functional needs repair'] = round(mean(test$amount_tsh[test$amount_tsh != 0 & test$status_group == 'functional needs repair']))
+
+
 # Creación de la variable estado en el test para que
 # coincidan en número a la hora de hacer transformaciones
 test$status_group = ""
@@ -226,12 +238,12 @@ fin = nrow(data)
 train = data[1:(inicio_test-1),]
 test = data[inicio_test:fin,]
 # F = 2, N = 3, O = 29 en 10CV accuracy de 0.843922558922559
-model.Ripper21 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
+model.Ripper22 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
                         gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
                         management_group+payment+quality_group+quantity+source+source_type+ source_class+
                         waterpoint_type, train, control = Weka_control(F = 2, N=3,O=29))
 
-summary(model.Ripper21)
-model.Ripper21.pred = predict(model.Ripper21,newdata = test)
+summary(model.Ripper22)
+model.Ripper22.pred = predict(model.Ripper22,newdata = test)
 
-generaSubida("21",test$id,model.Ripper21.pred)
+generaSubida("22",test$id,model.Ripper22.pred)
