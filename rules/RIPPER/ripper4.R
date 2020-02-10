@@ -55,13 +55,13 @@ test$construction_year[test$construction_year == 0 & test$status_group == 'funct
 
  # train y test para amount_tsh
 
- train$amount_tsh[train$amount_tsh == 0 & train$status_group == 'functional'] = round(mean(train$amount_tsh[train$amount_tsh != 0 & train$status_group == 'functional']))
- train$amount_tsh[train$amount_tsh == 0 & train$status_group == 'non functional'] = round(mean(train$amount_tsh[train$amount_tsh != 0 & train$status_group == 'non functional']))
- train$amount_tsh[train$amount_tsh == 0 & train$status_group == 'functional needs repair'] = round(mean(train$amount_tsh[train$amount_tsh != 0 & train$status_group == 'functional needs repair']))
+ #train$amount_tsh[train$amount_tsh == 0 & train$status_group == 'functional'] = round(mean(train$amount_tsh[train$amount_tsh != 0 & train$status_group == 'functional']))
+ #train$amount_tsh[train$amount_tsh == 0 & train$status_group == 'non functional'] = round(mean(train$amount_tsh[train$amount_tsh != 0 & train$status_group == 'non functional']))
+ #train$amount_tsh[train$amount_tsh == 0 & train$status_group == 'functional needs repair'] = round(mean(train$amount_tsh[train$amount_tsh != 0 & train$status_group == 'functional needs repair']))
 
- test$amount_tsh[test$amount_tsh == 0 & test$status_group == 'functional'] = round(mean(test$amount_tsh[test$amount_tsh != 0 & test$status_group == 'functional']))
- test$amount_tsh[test$amount_tsh == 0 & test$status_group == 'non functional'] = round(mean(test$amount_tsh[test$amount_tsh != 0 & test$status_group == 'non functional']))
- test$amount_tsh[test$amount_tsh == 0 & test$status_group == 'functional needs repair'] = round(mean(test$amount_tsh[test$amount_tsh != 0 & test$status_group == 'functional needs repair']))
+ #test$amount_tsh[test$amount_tsh == 0 & test$status_group == 'functional'] = round(mean(test$amount_tsh[test$amount_tsh != 0 & test$status_group == 'functional']))
+ #test$amount_tsh[test$amount_tsh == 0 & test$status_group == 'non functional'] = round(mean(test$amount_tsh[test$amount_tsh != 0 & test$status_group == 'non functional']))
+ #test$amount_tsh[test$amount_tsh == 0 & test$status_group == 'functional needs repair'] = round(mean(test$amount_tsh[test$amount_tsh != 0 & test$status_group == 'functional needs repair']))
 
 
 # Creación de la variable estado en el test para que
