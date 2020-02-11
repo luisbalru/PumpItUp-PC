@@ -8,8 +8,11 @@ import matplotlib.pyplot as plt
 
 from sklearn.experimental import enable_iterative_imputer
 
+from fancyimpute import KNN
+
 from sklearn.impute import KNNImputer
 from sklearn.impute import IterativeImputer
+from sklearn.impute import SimpleImputer
 from sklearn.decomposition import PCA
 from imblearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE
@@ -86,7 +89,7 @@ categorical_columns = [#"funder",
                         "waterpoint_type_group"]
 
 
-def readData(values_train_route="../data/train_values.csv", labels_train_route="../data/train_labels.csv", values_test_route="../data/test_values.csv"):
+def readData(values_train_route="../data/train_values.csv", labels_train_route="../data/train_labels.csv", values_test_route="../data/test_values.csv", labels_test_route = "../data/test_labels_xgboost.csv"):
     labels = None
     d=None
     with open(labels_train_route) as csvfile:
@@ -107,6 +110,9 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
             i+=1
     labels = pd.DataFrame(d)
     labels = np.array(labels["status_group"])
+
+    labels_test = pd.read_csv(labels_test_route)
+    labels_test = np.array(labels_test["status_group"])
 
     data_train = None
     with open(values_train_route) as csvfile:
@@ -154,6 +160,7 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
     index_train = list(range(len(data_train)))
     index_test = list(range(len(data_train),len(data_train)+len(data_test)))
 
+
     data = pd.concat([data_train, data_test])
 
     data = data.drop(columns=["wpt_name","subvillage","scheme_name", "funder", "installer", "ward", "amount_tsh", "num_private", "recorded_by"])
@@ -164,6 +171,50 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
     data["latitude"][data["latitude"]==-2e-8]=np.nan
     data["population"][data["population"]==0]=np.nan
     data["construction_year"][data["construction_year"]==0]=np.nan
+
+    '''
+    ind_functional = np.where(labels=="functional")[0]
+    functional_train = data.iloc[index_train]["construction_year"].iloc[ind_functional]
+    mean_functional_train = np.mean(functional_train[functional_train!=np.nan])
+
+    ind_non_functional = np.where(labels=="non functional")[0]
+    non_functional_train = data.iloc[index_train]["construction_year"].iloc[ind_non_functional]
+    mean_non_functional_train = np.mean(non_functional_train[non_functional_train!=np.nan])
+
+    ind_need_repair = np.where(labels=="functional needs repair")[0]
+    need_repair_train = data.iloc[index_train]["construction_year"].iloc[ind_need_repair]
+    mean_need_repair_train = np.mean(need_repair_train[need_repair_train!=np.nan])
+
+    for i in range(len(index_train)):
+        if data["construction_year"].iloc[index_train[i]]==np.nan:
+            if labels[i]=="functional":
+                data["construction_year"].iloc[index_train[i]]=mean_functional_train
+            elif labels[i]=="non functional":
+                data["construction_year"].iloc[index_train[i]]=mean_non_functional_train
+            else:
+                data["construction_year"].iloc[index_train[i]]=mean_need_repair_train
+
+    ind_functional = np.where(labels_test=="functional")[0]
+    functional_test = data.iloc[index_test]["construction_year"].iloc[ind_functional]
+    mean_functional_test = np.mean(functional_test[functional_test!=np.nan])
+
+    ind_non_functional = np.where(labels_test=="non functional")[0]
+    non_functional_test = data.iloc[index_test]["construction_year"].iloc[ind_non_functional]
+    mean_non_functional_test = np.mean(non_functional_test[non_functional_test!=np.nan])
+
+    ind_need_repair = np.where(labels_test=="functional needs repair")[0]
+    need_repair_test = data.iloc[index_test]["construction_year"].iloc[ind_need_repair]
+    mean_need_repair_test = np.mean(need_repair_test[need_repair_test!=np.nan])
+
+    for i in range(len(index_test)):
+        if data["construction_year"].iloc[index_test[i]]==np.nan:
+            if labels_test[i]=="functional":
+                data["construction_year"].iloc[index_test[i]]=mean_functional_test
+            elif labels_test[i]=="non functional":
+                data["construction_year"].iloc[index_test[i]]=mean_non_functional_test
+            else:
+                data["construction_year"].iloc[index_test[i]]=mean_need_repair_test
+    '''
 
     # Convertimos la fecha a float
     min_date = data["date_recorded"].min()
@@ -191,6 +242,11 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
 
     for cat in categorical_columns:
         data[cat] = pd.Categorical(data[cat].cat.codes)
+
+    #data["date_recorded"] = data["date_recorded"].transform(lambda x: np.log(x + 1))
+    #data["gps_height"] = data["gps_height"].transform(lambda x: np.log(x + 1))
+    #data["latitude"] = data["latitude"].transform(lambda x: np.log(x + 1))
+    #data["longitude"] = data["longitude"].transform(lambda x: np.log(x + 1))
 
     print("Imputando datos...")
     data = pd.DataFrame(IterativeImputer().fit_transform(data), columns=data.keys())

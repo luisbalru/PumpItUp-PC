@@ -30,14 +30,19 @@ accs = []
 f1s = []
 tiempos = []
 
-possibleK = [1,3,5,7,9,11]
-possibleK=[7]
+#possibleK = [1,3,5,7,9,11]
+#dims = list(range(5,50))
+#possibleK=[1]*len(dims) + [3]*len(dims) + [5]*len(dims) + [7]*len(dims)
+possibleK=[1]
+dims=[44]
 X,y, _ = preprocessing.readData()
 print("El conjunto de datos tiene dimension: " + str(len(X.iloc[0])))
 
-for k in possibleK:
+for k,dim in zip(possibleK, dims):
+    print("K="+str(k))
+    print("Dim="+str(dim))
     classifier = KNeighborsClassifier(n_neighbors=k, n_jobs=-1)
-    skf = StratifiedKFold(n_splits=5)
+    skf = StratifiedKFold(n_splits=5, random_state=123456789)
 
     scores = []
     f1_scores = []
@@ -54,7 +59,7 @@ for k in possibleK:
         train_set, train_labels = X.iloc[train_index], y[train_index]
         test_set, test_labels = X.iloc[test_index], y[test_index]
 
-        train_set,train_labels,id_train,test_set,id_test = pipeline.Pipeline(train_set, train_labels, test_set)
+        train_set,train_labels,id_train,test_set,id_test = pipeline.Pipeline(train_set, train_labels, test_set, dim)
 
         start_time = time.time()
         classifier.fit(train_set, train_labels)
@@ -108,9 +113,9 @@ for k in possibleK:
 
     print(latex_new)
 
-mejor = [1,0,-1,-1]
-for k,a,f1,t in zip(possibleK,accs,f1s,tiempos):
-    print("\nPara k=" + str(k) + " los resultados son:")
+mejor = [1,0,-1,-1,-1]
+for k,d,a,f1,t in zip(possibleK,dims,accs,f1s,tiempos):
+    print("\nPara k=" + str(k) + ", ndims=" + str(d) + " los resultados son:")
     print("Accuracy medio: " + str(a) + "%")
     print("F1 medio: " + str(f1) + "%")
     print("Tiempo medio: " + str(t) + "s")
@@ -119,8 +124,9 @@ for k,a,f1,t in zip(possibleK,accs,f1s,tiempos):
         mejor[1]=a
         mejor[2]=f1
         mejor[3]=t
+        mejor[4]=d
 
-print("\n\n\nEl mejor resultado obtenido es con k=" + str(mejor[0]) + " con resultados:")
+print("\n\n\nEl mejor resultado obtenido es con k=" + str(mejor[0]) + ", ndims=" + str(mejor[4]) + " con resultados:")
 print("Accuracy medio: " + str(mejor[1]) + "%")
 print("F1 medio: " + str(mejor[2]) + "%")
 print("Tiempo medio: " + str(mejor[3]) + "s")

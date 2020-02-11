@@ -11,7 +11,7 @@ import preprocessing
 
 np.random.seed(123456789)
 
-classifier = KNeighborsClassifier(n_neighbors=7, n_jobs=-1)
+classifier = KNeighborsClassifier(n_neighbors=1, n_jobs=-1)
 
 print("Reading train/test sets...")
 X_train, y_train, X_test = preprocessing.readData()

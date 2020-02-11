@@ -3,7 +3,7 @@ options(java.parameters = "-Xmx8000m")
 library(NoiseFiltersR)
 
 datos <- as.data.frame(read.csv("/tmp/data_for_r.txt"))
-datos_limpios<-IPF(datos)$cleanData
+datos_limpios<-IPF(datos, p=0.5, s=4)$cleanData
 labels <- datos_limpios[,length(datos_limpios)]
 datos_limpios<-datos_limpios[,-length(datos_limpios)]
 

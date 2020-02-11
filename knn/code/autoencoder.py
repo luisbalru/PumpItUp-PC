@@ -7,6 +7,7 @@ import pandas as pd
 
 import random
 import tensorflow as tf
+from keras.callbacks import EarlyStopping
 
 import os
 os.environ['PYTHONHASHSEED']=str(123456789)
@@ -45,6 +46,7 @@ def fitTransform(X_train, X_test, nepochs, hid, bsize=32, drop_rate=0.2, kreg=re
 
     encoder = Model(input_img, encoded)
     autoencoder = Model(input_img, decoded)
+    #callbacks = [EarlyStopping(monitor="val_loss", patience=3)]
     autoencoder.compile(optimizer=optimizer, loss=loss)
     encoder.compile(optimizer=optimizer, loss=loss)
 

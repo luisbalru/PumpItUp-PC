@@ -191,11 +191,13 @@ class SSMA(InstanceReductionMixin):
     def generate_population(self, X, y):
         ones_density = int(self.initial_density*len(y))
         self.chromosomes = []
+        print("Generando poblacion...")
         for i in range(self.chromosomes_count-1):
             ind = np.random.choice(len(X), ones_density, replace=False)
             c = np.zeros(len(X))
             c[ind]=1
             self.chromosomes.append(c)
+        print("Evaluando la poblacion...")
         self.chromosomes.append(np.ones(len(X)))
         self.evaluations = [self.fitness(c, X, y) for c in self.chromosomes]
 
