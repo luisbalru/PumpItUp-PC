@@ -108,12 +108,35 @@ fin = nrow(data)
 train = data[1:(inicio_test-1),]
 test = data[inicio_test:fin,]
 
-model.Ripper25 = JRip(status_group~latitude+longitude+date_recorded+basin+lga+funder+population+construction_year+installer+
-                        gps_height+public_meeting+scheme_management+permit+extraction_type+management+
-                        management_group+payment+quality_group+quantity+source+ source_class+
-                        waterpoint_type, train, control = Weka_control(F = 2, N=3,O=29))
 
-summary(model.Ripper25)
-model.Ripper25.pred = predict(model.Ripper25,newdata = test)
+#model.Ripper25 = JRip(status_group~latitude+longitude+date_recorded+basin+lga+funder+population+construction_year+installer+
+ #                       gps_height+public_meeting+scheme_management+permit+extraction_type+management+
+  #                      management_group+payment+quality_group+quantity+source+ source_class+
+   #                     waterpoint_type, train, control = Weka_control(F = 2, N=3,O=29))
 
-generaSubida('25',test$id,model.Ripper25.pred)
+#summary(model.Ripper25)
+#model.Ripper25.pred = predict(model.Ripper25,newdata = test)
+
+#generaSubida('25',test$id,model.Ripper25.pred)
+accuracies = c()
+for(f in 18:10){
+	for(o in 30:20){
+		train = train[sample(nrow(train)),]
+      		folds = cut(seq(1,nrow(train)), breaks=5, labels=FALSE)
+      		suma_acc = 0
+	      for(i in 1:5){
+		testIndexes = which(folds==i, arr.ind=T)
+		testData = train[testIndexes,]
+		etiquetas = testData$status_group
+		testData$status_group = NULL
+		trainData = train[-testIndexes,]
+		modelo = JRip(status_group~., trainData, control = Weka_control(F = f, N= n,O=o))
+		prediccion = predict(modelo, newdata=testData)
+		suma_acc = suma_acc + Accuracy(prediccion,etiquetas)
+	      }
+	      suma_acc = suma_acc/5
+	      res = paste("F:", f, ",O:", o,",Acc:", suma_acc,"\n", sep="")
+	      print(res)
+	      accuracies = append(accuracies,suma_acc)
+	}
+}
