@@ -235,18 +235,18 @@ salida_ipf = IPF(status_group~.,data=train,s=4,p=0.5)
 table(salida_ipf$cleanData$status_group)
 
 # SMOTE
-install.packages("devtools")
-devtools::install_github("ncordon/imbalance")
-library("imbalance")
+#install.packages("devtools")
+#devtools::install_github("ncordon/imbalance")
+#library("imbalance")
 
-salida_smote = mwmote(train,numInstances=4000,classAttr='status_group')
+#salida_smote = mwmote(train,numInstances=4000,classAttr='status_group')
 
 
 # F = 2, N = 3, O = 29 en 10CV accuracy de 0.843922558922559
 model.Ripper23 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
                         gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
                         management_group+payment+quality_group+quantity+source+source_type+ source_class+
-                        waterpoint_type, salida_smote, control = Weka_control(F = 2, N=3,O=29))
+                        waterpoint_type, salida_ipf$cleanData, control = Weka_control(F = 2, N=3,O=29))
 
 summary(model.Ripper23)
 model.Ripper23.pred = predict(model.Ripper23,newdata = test)
