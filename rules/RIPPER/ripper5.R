@@ -140,3 +140,4 @@ for(f in 18:10){
 	      accuracies = append(accuracies,suma_acc)
 	}
 }
+write(accuracies,file="resultados.txt")
