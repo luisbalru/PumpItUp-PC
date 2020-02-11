@@ -108,9 +108,9 @@ fin = nrow(data)
 train = data[1:(inicio_test-1),]
 test = data[inicio_test:fin,]
 
-model.Ripper25 = JRip(status_group~latitude+longitude+date_recorded+basin+lga+funder+population+construction_year+
-                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
-                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+model.Ripper25 = JRip(status_group~latitude+longitude+date_recorded+basin+lga+funder+population+construction_year+installer+
+                        gps_height+public_meeting+scheme_management+permit+extraction_type+management+
+                        management_group+payment+quality_group+quantity+source+ source_class+
                         waterpoint_type, train, control = Weka_control(F = 2, N=3,O=29))
 
 summary(model.Ripper25)
