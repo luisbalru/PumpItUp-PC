@@ -237,6 +237,7 @@ table(salida_ipf$cleanData$status_group)
 # SMOTE
 install.packages("devtools")
 devtools::install_github("ncordon/imbalance")
+library("imbalance")
 
 salida_smote = mwmote(train,numInstances=4000,classAttr='status_group')
 
