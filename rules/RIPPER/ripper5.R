@@ -53,6 +53,37 @@ test$construction_year[test$construction_year == 0 & test$status_group == 'funct
 # coincidan en número a la hora de hacer transformaciones
 test$status_group = ""
 
+
+#####################################################333
+# VISUALIZACIÓN
+
+# amount_tsh
+ggplot(train, aes(x=longitude, y=latitude)) + geom_point(aes(colour=status_group))
+
+train$longitude[train$region == "Arusha" & train$longitude == 0] =	36.55407
+train$longitude[train$region=="Dar es Salaam" & train$longitude==0] = 39.21294
+train$longitude[train$region=="Dodoma" & train$longitude==0] = 36.04196
+train$longitude[train$region=="Iringa" & train$longitude==0] = 34.89592
+train$longitude[train$region=="Kagera" & train$longitude==0] = 31.23309
+train$longitude[train$region=="Kigoma" & train$longitude==0] = 30.21889
+train$longitude[train$region=="Kilimanjaro" & train$longitude==0] = 37.50546
+train$longitude[train$region=="Lindi" & train$longitude==0] = 38.98799
+train$longitude[train$region=="Manyara" & train$longitude==0] = 35.92932
+train$longitude[train$region=="Mara" & train$longitude==0] = 34.15698
+train$longitude[train$region=="Mbeya" & train$longitude==0] = 33.53351
+train$longitude[train$region=="Morogoro" & train$longitude==0] = 37.04678
+train$longitude[train$region=="Mtwara" & train$longitude==0] = 39.38862
+train$longitude[train$region=="Mwanza" & train$longitude==0] = 33.09477
+train$longitude[train$region=="Pwani" & train$longitude==0] = 38.88372
+train$longitude[train$region=="Rukwa" & train$longitude==0] = 31.29116
+train$longitude[train$region=="Ruvuma" & train$longitude==0] = 35.72784
+train$longitude[train$region=="Shinyanga" & train$longitude==0] = 33.24037
+train$longitude[train$region=="Singida" & train$longitude==0] = 373950
+train$longitude[train$region=="Tabora" & train$longitude==0] = 32.87830
+train$longitude[train$region=="Tanga" & train$longitude==0] = 38.50195
+
+ggplot(train, aes(x=longitude, y=latitude)) + geom_point(aes(colour=status_group))
+
 data = rbind(train,test)
 
 data$wpt_name = NULL
@@ -130,7 +161,7 @@ for(f in 18:10){
 		etiquetas = testData$status_group
 		testData$status_group = NULL
 		trainData = train[-testIndexes,]
-		modelo = JRip(status_group~., trainData, control = Weka_control(F = f, N= n,O=o))
+		modelo = JRip(status_group~., trainData, control = Weka_control(F = f,N=3,O=o))
 		prediccion = predict(modelo, newdata=testData)
 		suma_acc = suma_acc + Accuracy(prediccion,etiquetas)
 	      }
