@@ -20,6 +20,12 @@ for col in full_dataset.columns:
 
 print()
 
+print("NUMERICAL COLUMNS - Nº OF ZEROES")
+for col in numeric_vars:
+    print("{}: {}".format(col, len(full_dataset.loc[full_dataset[col] == 0])))
+
+print()
+
 print("CATEGORICAL COLUMNS - Nº OF CATEGORIES")
 for col in categorical_vars:
     print("{}: {}".format(col, len(full_dataset[col].unique())))

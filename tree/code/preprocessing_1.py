@@ -4,6 +4,26 @@ import pandas as pd
 train_dataset = pd.read_csv("data/training.csv")
 train_labels = pd.read_csv("data/training-labels.csv")
 test_dataset = pd.read_csv("data/test.csv")
+test_labels = pd.read_csv("data/test-labels.csv")
+
+train_dataset['date_recorded'] = pd.to_datetime(train_dataset['date_recorded'])
+test_dataset['date_recorded'] = pd.to_datetime(test_dataset['date_recorded'])
+
+train_dataset['year_recorded'] = train_dataset['date_recorded'].map(
+    lambda x: x.year
+)
+
+test_dataset['year_recorded'] = test_dataset['date_recorded'].map(
+    lambda x: x.year
+)
+
+train_dataset['month_recorded'] = train_dataset['date_recorded'].map(
+    lambda x: x.month
+)
+
+test_dataset['month_recorded'] = test_dataset['date_recorded'].map(
+    lambda x: x.month
+)
 
 categorical_vars = train_dataset.select_dtypes(exclude=np.number)
 
@@ -12,16 +32,17 @@ variables_to_drop = [
     "scheme_name",
     "recorded_by",
     "region_code",
-    "construction_year"
+    'amount_tsh'
 ]
 
 for col in categorical_vars.columns:
-    if len(full_dataset[col].unique()) > 100:
+    if len(train_dataset[col].unique()) > 100:
         variables_to_drop.append(col)
 
 train_dataset.drop(columns=variables_to_drop, inplace=True)
 test_dataset.drop(columns=variables_to_drop, inplace=True)
 
+## MISSING VALUES IMPUTATION
 fill_values = {}
 for col in train_dataset.columns:
     if np.issubdtype(train_dataset[col].dtype, np.number):
@@ -36,5 +57,72 @@ test_dataset = test_dataset.fillna(value=fill_values)
 
 train_dataset = pd.merge(train_dataset, train_labels)
 
-train_dataset.to_csv("train-preprocessed.csv")
-test_dataset.to_csv("test-preprocessed.csv")
+## IMPUTATION OF ZEROES (MISSING VALUES FOR SOME COLUMNS)
+fill_1 = np.mean(train_dataset.loc[
+    (train_dataset['construction_year'] > 0) &
+    (train_dataset['status_group'] == "functional"),
+    "construction_year"
+])
+
+fill_2 = np.mean(train_dataset.loc[
+    (train_dataset['construction_year'] > 0) &
+    (train_dataset['status_group'] == "non functional"),
+    "construction_year"
+])
+
+fill_3 = np.mean(train_dataset.loc[
+    (train_dataset['construction_year'] > 0) &
+    (train_dataset['status_group'] == "functional needs repair"),
+    "construction_year"
+])
+
+train_dataset.loc[
+    (train_dataset['construction_year'] == 0) &
+    (train_dataset['status_group'] == "functional"),
+    "construction_year"
+] = fill_1
+
+train_dataset.loc[
+    (train_dataset['construction_year'] == 0) &
+    (train_dataset['status_group'] == "non functional"),
+    "construction_year"
+] = fill_2
+
+train_dataset.loc[
+    (train_dataset['construction_year'] == 0) &
+    (train_dataset['status_group'] == "functional needs repair"),
+    "construction_year"
+] = fill_3
+
+test_dataset = pd.merge(test_dataset, test_labels)
+
+test_dataset.loc[
+    (test_dataset['construction_year'] == 0) &
+    (test_dataset['status_group'] == "functional"),
+    "construction_year"
+] = fill_1
+
+test_dataset.loc[
+    (test_dataset['construction_year'] == 0) &
+    (test_dataset['status_group'] == "non functional"),
+    "construction_year"
+] = fill_2
+
+test_dataset.loc[
+    (test_dataset['construction_year'] == 0) &
+    (test_dataset['status_group'] == "functional needs repair"),
+    "construction_year"
+] = fill_3
+
+test_dataset.drop(columns="status_group", inplace=True)
+
+train_dataset['age'] = train_dataset['year_recorded'] - train_dataset[
+    'construction_year'
+]
+
+test_dataset['age'] = test_dataset['year_recorded'] - test_dataset[
+    'construction_year'
+]
+
+train_dataset.to_csv("tree/train-preprocessed.csv")
+test_dataset.to_csv("tree/test-preprocessed.csv")
