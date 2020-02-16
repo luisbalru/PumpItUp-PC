@@ -14,3 +14,7 @@ Intento, File, Accuracy
 18,submission_int18.csv,0.7568
 20,submission_int20.csv,0.7776
 21,submission_int21.csv,0.7815
+22,submission_int22.csv,0.7191
+23,submission_int23.csv,0.7357
+24,submission_int24.csv,0.7828
+25,submission_int25.csv,0.7869

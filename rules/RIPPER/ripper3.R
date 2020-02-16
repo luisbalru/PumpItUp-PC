@@ -256,7 +256,7 @@ test = data[inicio_test:fin,]
 #generaSubida("20",test$id,model.Ripper20.pred)
 
 # 10-CV GRID SEARCH
-f = file('resultados.txt')
+accuracies = c()
 for(f in 15:1){
   #print(paste("F: ", f))
   for(n in seq(15,7,-1)){
@@ -281,9 +281,9 @@ for(f in 15:1){
       }
       suma_acc = suma_acc/5
       res = paste("F:", f, ",N:", n, ",O:", o,",Acc:", suma_acc,"\n", sep="")
-      writeLines(res,f)
+      print(res)
       accuracies = append(accuracies,suma_acc)
     }
   }
 }
-close(f)
+write("resultados.txt",accuracies)

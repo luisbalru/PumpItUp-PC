@@ -2,7 +2,7 @@
 # RIPPER: PREPROCESAMIENTO Y CLASIFICACIÓN     #
 # Autor: Luis Balderas Ruiz                    #
 ################################################
-options(java.parameters = "-Xmx8g")
+options(java.parameters = "-Xmx55g")
 library(RWeka)
 library(ggplot2)
 library(rpart)
@@ -180,7 +180,7 @@ data$scheme_management[data$scheme_management == 'SWC'] = 'Other'
 data$scheme_management[data$scheme_management == 'Trust'] = 'Other'
 data$scheme_management[data$scheme_management == ''] = 'Other'
 data$scheme_management = as.factor(data$scheme_management)
-table(data$scheme_management)
+
 
 # permit --> introduzco desconocido
 table(data$permit)
@@ -207,43 +207,59 @@ data$funder[data$funder == '' | data$funder == 0] = 'desconocido'
 minoritarios = names(tabla_funder[tabla_funder<=150])
 data$funder[data$funder %in% minoritarios] = "otros"
 data$funder = as.factor(data$funder)
-table(data$funder)
 
-# basin
-table(data$basin)
+
 
 #installer
 table(data$installer)
 data$installer = as.character(data$installer)
 data$installer[data$installer == '' | data$installer == 0 | data$installer == '-'] = 'desconocido'
 data$installer = as.factor(data$installer)
-table(data$installer)
 
 #data$date_recorded = NULL
 #data$scheme_name = NULL
 
 
-###
-# PCA
-#install.packages("fastDummies")
-#library(fastDummies)
-#data$num_private = NULL
-#data$subvillage = NULL
-#data$district_code = NULL
-#dummies = dummy_cols(data, select_columns = c("funder","installer","wpt_name","basin","region","region_code","lga","ward","public_meeting","recorded_by","scheme_management","permit","extraction_type","extraction_type_group","extraction_type_class","management","management_group","payment","payment_type","water_quality","quality_group","quantity","quantity_group","source","source_type","source_class","waterpoint_type","waterpoint_type_group"))
-#print(colnames(dummies))
+
 
 inicio_test = nrow(train) + 1
 fin = nrow(data)
 train = data[1:(inicio_test-1),]
 test = data[inicio_test:fin,]
+
+# IPF
+#install.packages("NoiseFiltersR")
+#library(NoiseFiltersR)
+#salida_ipf = IPF(status_group~.,data=train,s=4,p=0.5)
+
+#table(salida_ipf$cleanData$status_group)
+
+# SMOTE
+#install.packages("devtools")
+#devtools::install_github("ncordon/imbalance")
+#library("imbalance")
+
+#salida_smote = mwmote(train,numInstances=4000,classAttr='status_group')
+
+
 # F = 2, N = 3, O = 29 en 10CV accuracy de 0.843922558922559
-model.Ripper22 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
+#model.Ripper23 = JRip(status_group~amount_tsh+latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
+#                        gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
+#                        management_group+payment+quality_group+quantity+source+source_type+ source_class+
+#                        waterpoint_type, train, control = Weka_control(F = 2, N=3,O=29))
+
+#summary(model.Ripper23)
+#model.Ripper23.pred = predict(model.Ripper23,newdata = test)
+
+#generaSubida('23',test$id,model.Ripper23.pred)
+
+# F = 2, N = 3, O = 29 en 10CV accuracy de 0.843922558922559
+model.Ripper24 = JRip(status_group~latitude+longitude+date_recorded+basin+lga+funder+population+antiguedad+construction_year+
                         gps_height+public_meeting+scheme_name+permit+extraction_type_class+management+
                         management_group+payment+quality_group+quantity+source+source_type+ source_class+
                         waterpoint_type, train, control = Weka_control(F = 2, N=3,O=29))
 
-summary(model.Ripper22)
-model.Ripper22.pred = predict(model.Ripper22,newdata = test)
+summary(model.Ripper24)
+model.Ripper24.pred = predict(model.Ripper24,newdata = test)
 
-generaSubida("22",test$id,model.Ripper22.pred)
+generaSubida('24',test$id,model.Ripper24.pred)
