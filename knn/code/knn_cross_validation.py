@@ -31,7 +31,7 @@ f1s = []
 tiempos = []
 
 #possibleK = [1,3,5,7,9,11]
-#dims = list(range(5,50))
+#dims = list(range(30,50))
 #possibleK=[1]*len(dims) + [3]*len(dims) + [5]*len(dims) + [7]*len(dims)
 possibleK=[1]
 dims=[44]
