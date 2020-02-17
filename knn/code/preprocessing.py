@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 from sklearn.experimental import enable_iterative_imputer
 
-from fancyimpute import KNN
+#from fancyimpute import KNN
 
 from sklearn.impute import KNNImputer
 from sklearn.impute import IterativeImputer
@@ -19,7 +19,7 @@ from imblearn.over_sampling import SMOTE
 
 types = {
     "id" : "int",
-    ##"amount_tsh" : "float",
+    #Paco"amount_tsh" : "float",
     "date_recorded" : "datetime64",
     #"funder" : "str",
     "gps_height" : "float",
@@ -31,15 +31,15 @@ types = {
     "basin" : "str",
     #"subvillage" : "str",
     "region" : "str",
-    "region_code" : "int",
+    #Paco"region_code" : "int",
     "district_code" : "int",
-    "lga" : "str",
+    #Paco"lga" : "str",
     #"ward" : "str",
     ##"population" : "int",
     "public_meeting" : "bool",
     ##"recorded_by" : "str",
     "scheme_management" : "str",
-    #"scheme_name" : "str",
+    #Paco"scheme_name" : "str",
     "permit" : "bool",
     "construction_year" : "int",
     "extraction_type" : "str",
@@ -66,11 +66,11 @@ categorical_columns = [#"funder",
                         "basin",
                         #"subvillage",
                         "region",
-                        "lga",
+                        #Paco"lga",
                         #"ward",
                         ##"recorded_by",
                         "scheme_management",
-                        #"scheme_name",
+                        #Paco"scheme_name",
                         "extraction_type",
                         "extraction_type_group",
                         "extraction_type_class",
@@ -87,6 +87,13 @@ categorical_columns = [#"funder",
                         "source_class",
                         "waterpoint_type",
                         "waterpoint_type_group"]
+                        #$"region_code",
+                        #$"district_code"]
+
+numerical_column = [#Paco"amount_tsh",
+                    "gps_height",
+                    "longitude",
+                    "latitude"]
 
 
 def readData(values_train_route="../data/train_values.csv", labels_train_route="../data/train_labels.csv", values_test_route="../data/test_values.csv", labels_test_route = "../data/test_labels_xgboost.csv"):
@@ -163,7 +170,8 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
 
     data = pd.concat([data_train, data_test])
 
-    data = data.drop(columns=["wpt_name","subvillage","scheme_name", "funder", "installer", "ward", "amount_tsh", "num_private", "recorded_by"])
+    #data = data.drop(columns=["wpt_name", "installer", "funder", "ward", "num_private", "recorded_by", "subvillage"])
+    data = data.drop(columns=['scheme_name', 'recorded_by', 'region_code', 'amount_tsh', 'num_private', 'funder', 'installer', 'wpt_name', 'subvillage', 'lga', 'ward'])
 
     # Pasamos los datos perdidos a nan
     data["gps_height"][data["gps_height"]==0]=np.nan
@@ -172,7 +180,19 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
     data["population"][data["population"]==0]=np.nan
     data["construction_year"][data["construction_year"]==0]=np.nan
 
-    '''
+    print("Marcando outliers univariantes como anomalias...")
+    for name in  numerical_column:
+        clean = np.array(data[name])
+        clean = clean[clean!=np.nan]
+        mean = np.mean(clean)
+        median = np.median(clean)
+        std = np.std(clean)
+        for i in range(len(data)):
+            if data[name].iloc[i]!=np.nan:
+                if data[name].iloc[i]>mean+5*std or data[name].iloc[i]<mean-5*std:
+                    data[name].iloc[i] = median
+
+
     ind_functional = np.where(labels=="functional")[0]
     functional_train = data.iloc[index_train]["construction_year"].iloc[ind_functional]
     mean_functional_train = np.mean(functional_train[functional_train!=np.nan])
@@ -214,13 +234,14 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
                 data["construction_year"].iloc[index_test[i]]=mean_non_functional_test
             else:
                 data["construction_year"].iloc[index_test[i]]=mean_need_repair_test
-    '''
 
     # Convertimos la fecha a float
-    min_date = data["date_recorded"].min()
     for i in range(len(data)):
-        # In days
-        data["date_recorded"].iloc[i] = (data["date_recorded"].iloc[i]-min_date).total_seconds()/86400
+        # In years
+        data["date_recorded"].iloc[i] = data["date_recorded"].iloc[i].year
+
+    data["pump_age"] = data["date_recorded"]-data["construction_year"]
+    data = data.drop(columns=["date_recorded", "construction_year"])
 
     for cat in categorical_columns:
         data[cat] = pd.Categorical(data[cat])
@@ -231,6 +252,7 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
             continue
 
         threshold = data[cat].value_counts().iloc[0]*0.1
+        threshold = 1
         new_cat = "aglomerate"
 
         bad_categories = np.array(data[cat].value_counts().index[np.where(data[cat].value_counts()<=threshold)[0]].astype("str"))

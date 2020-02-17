@@ -3,13 +3,14 @@ import pandas as pd
 import seaborn as sb
 import matplotlib.pyplot as plt
 
-dataset = pd.read_csv("data/training.csv")
-labels = pd.read_csv("data/training-labels.csv")
-full_dataset = pd.merge(dataset, labels)
+train_dataset = pd.read_csv("data/training.csv")
+train_labels = pd.read_csv("data/training-labels.csv")
+
+full_dataset = train_dataset
 
 numeric_vars = full_dataset.select_dtypes(include=np.number)
 
-numeric_vars = pd.merge(numeric_vars, labels)
+numeric_vars = pd.merge(numeric_vars, train_labels)
 numeric_vars.drop(columns="id", inplace=True)
 
 categorical_vars = full_dataset.select_dtypes(exclude=np.number)

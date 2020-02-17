@@ -24,3 +24,27 @@
   la media y la moda por clase en el conjunto de entrenamiento, en test se sigue
   imputando de la misma manera
 - Mismo resultado que con la imputación simple, se descarta esta vía
+
+# PASADA 4 - 05/02/2020 (0.7385)
+- Creación de una nueva categoría para el valor perdido. Malos resultados,
+  se descarta la vía
+
+# PASADA 5 - 05/02/2020 (0.7640)
+- Trabajamos sobre la pasada 1
+- Eliminamos amount_tsh y num_private por tener muchos 0 (valor perdido en este
+  caso)
+
+# PASADA 6 - 10/02/2020 (0.7875) - Trabajamos sobre la pasada 1
+- Imputamos de forma inteligente los valores perdidos de la columna
+  construction_year. Clasificamos el conjunto de datos sin tener esa
+  columna en cuenta con un método potente. Para imputar los 0 en test,
+  consideramos esa predicción como buena y colocamos en la columna el
+  valor medio de train para la clase predicha.
+
+# PASADA 7 - 13/02/2020 (0.7925) - Trabajamos sobre la pasada 1
+- En lugar de usar construction_year directamente, extraemos el año
+  de registro (date_recorded, campo año), y la diferencia nos da la edad
+  del pozo cuando se toma la medida, en lugar del tiempo que ha pasado
+  hasta el momento actual.
+- Se elimina también la variable numérica amount_tsh, ya que tiene poca
+  variabilidad.
