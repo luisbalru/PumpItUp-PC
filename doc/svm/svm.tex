@@ -1,0 +1,97 @@
+\section{SVM}
+
+\begin{frame}
+\frametitle{Preprocesamiento para SVM}
+
+\begin{itemize}
+	\item Selección de variables. 
+	\begin{itemize}
+		\item $region$, $recorded\_by$, $num\_private$,...
+		\item Variables categóricas con más de 100 valores.
+	\end{itemize}
+	\pause
+	\item Detección de valores perdidos(NA).
+	\begin{itemize}
+		\item $population = 0$??
+		\item $construction\_year = 0$??
+		\item Valores vacios.
+	\end{itemize}
+	\pause
+	\item Cambiar tipos de dato.
+	\begin{itemize}
+		\item $region\_code$/$district\_code$ a factor.
+		\item $date$ a numérico.
+	\end{itemize}
+\end{itemize}
+
+
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Limpieza de ruido mediante IPF}
+
+\begin{itemize}
+	\item Iterative Partitioning Filter.
+	{
+	\begin{itemize}
+		\item Split the current training dataset E into $n$ equal sized subsets.
+		\item  Build a classifier with the C4.5 algorithm over each of these $n$ subsets and use them to evaluate the whole current training dataset E.
+		\item Add to A the noisy examples identified in E using a voting scheme (consensus or majority).
+		\item Remove the noisy examples: E = E \ A.
+	\end{itemize}
+	}
+
+	\item En la mejor versión no se utiliza...
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+\frametitle{Imputación de valores perdidos}
+
+\begin{itemize}
+	\item Amelia para valores perdidos numéricos(método iterativo de imputación).
+	
+	\item Imputación mediante KNN(mediante media, moda, mediana...).
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Duminicación de variables}
+
+\begin{itemize}
+	\item Para cada valor las variables categórica, creamos una variable que valdrá 1 si la instancia tiene este valor.
+	\item Para cada variable, eliminamos una de las variables dumificadas(dependencia).
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{PCA para variables dumificadas. Selección de subespacios relevantes.}
+
+\begin{itemize}
+	\item Normalizamos las variables para aplicar PCA.
+	\item Aplicamos PCA y nos quedamos con las variables cuya desviación típica sea mayor de 0.00001
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Aplicar SMOTE para balancear clases.}
+
+El método SMOTE genera instancias de la clase minoritaria, sobre representandola. 
+
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Puntuación a lo largo del tiempo de SVM}
+
+
+
+\end{frame}
