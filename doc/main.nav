@@ -7,64 +7,59 @@
 \headcommand {\sectionentry {1}{SVM}{3}{SVM}{0}}
 \headcommand {\slideentry {1}{0}{1}{3/3}{}{0}}
 \headcommand {\beamer@framepages {3}{3}}
-\headcommand {\beamer@sectionpages {3}{3}}
-\headcommand {\beamer@subsectionpages {3}{3}}
-\headcommand {\sectionentry {2}{SVM}{4}{SVM}{0}}
-\headcommand {\slideentry {2}{0}{1}{4/4}{}{0}}
-\headcommand {\beamer@framepages {4}{4}}
-\headcommand {\slideentry {2}{0}{2}{5/7}{}{0}}
-\headcommand {\beamer@framepages {5}{7}}
-\headcommand {\slideentry {2}{0}{3}{8/8}{}{0}}
+\headcommand {\slideentry {1}{0}{2}{4/6}{}{0}}
+\headcommand {\beamer@framepages {4}{6}}
+\headcommand {\slideentry {1}{0}{3}{7/7}{}{0}}
+\headcommand {\beamer@framepages {7}{7}}
+\headcommand {\slideentry {1}{0}{4}{8/8}{}{0}}
 \headcommand {\beamer@framepages {8}{8}}
-\headcommand {\slideentry {2}{0}{4}{9/9}{}{0}}
+\headcommand {\slideentry {1}{0}{5}{9/9}{}{0}}
 \headcommand {\beamer@framepages {9}{9}}
-\headcommand {\slideentry {2}{0}{5}{10/10}{}{0}}
+\headcommand {\slideentry {1}{0}{6}{10/10}{}{0}}
 \headcommand {\beamer@framepages {10}{10}}
-\headcommand {\slideentry {2}{0}{6}{11/11}{}{0}}
+\headcommand {\slideentry {1}{0}{7}{11/11}{}{0}}
 \headcommand {\beamer@framepages {11}{11}}
-\headcommand {\slideentry {2}{0}{7}{12/12}{}{0}}
+\headcommand {\slideentry {1}{0}{8}{12/12}{}{0}}
 \headcommand {\beamer@framepages {12}{12}}
-\headcommand {\slideentry {2}{0}{8}{13/13}{}{0}}
+\headcommand {\slideentry {1}{0}{9}{13/13}{}{0}}
 \headcommand {\beamer@framepages {13}{13}}
-\headcommand {\slideentry {2}{0}{9}{14/14}{}{0}}
+\headcommand {\beamer@sectionpages {3}{13}}
+\headcommand {\beamer@subsectionpages {3}{13}}
+\headcommand {\sectionentry {2}{RIPPER}{14}{RIPPER}{0}}
+\headcommand {\slideentry {2}{0}{1}{14/14}{}{0}}
 \headcommand {\beamer@framepages {14}{14}}
-\headcommand {\beamer@sectionpages {4}{14}}
-\headcommand {\beamer@subsectionpages {4}{14}}
-\headcommand {\sectionentry {3}{RIPPER}{15}{RIPPER}{0}}
-\headcommand {\slideentry {3}{0}{1}{15/15}{}{0}}
-\headcommand {\beamer@framepages {15}{15}}
-\headcommand {\slideentry {3}{0}{2}{16/18}{}{0}}
-\headcommand {\beamer@framepages {16}{18}}
-\headcommand {\beamer@subsectionpages {15}{18}}
-\headcommand {\beamer@subsectionentry {0}{3}{1}{19}{T\IeC {\'e}cnicas que no dan resultados}}
-\headcommand {\slideentry {3}{1}{1}{19/20}{T\IeC {\'e}cnicas que no dan resultados}{0}}
-\headcommand {\beamer@framepages {19}{20}}
-\headcommand {\slideentry {3}{1}{2}{21/23}{T\IeC {\'e}cnicas que no dan resultados}{0}}
-\headcommand {\beamer@framepages {21}{23}}
-\headcommand {\beamer@subsectionpages {19}{23}}
-\headcommand {\beamer@subsectionentry {0}{3}{2}{24}{T\IeC {\'e}cnicas que dan resultados}}
-\headcommand {\slideentry {3}{2}{1}{24/24}{T\IeC {\'e}cnicas que dan resultados}{0}}
+\headcommand {\slideentry {2}{0}{2}{15/17}{}{0}}
+\headcommand {\beamer@framepages {15}{17}}
+\headcommand {\beamer@subsectionpages {14}{17}}
+\headcommand {\beamer@subsectionentry {0}{2}{1}{18}{T\IeC {\'e}cnicas que no dan resultados}}
+\headcommand {\slideentry {2}{1}{1}{18/19}{T\IeC {\'e}cnicas que no dan resultados}{0}}
+\headcommand {\beamer@framepages {18}{19}}
+\headcommand {\slideentry {2}{1}{2}{20/22}{T\IeC {\'e}cnicas que no dan resultados}{0}}
+\headcommand {\beamer@framepages {20}{22}}
+\headcommand {\beamer@subsectionpages {18}{22}}
+\headcommand {\beamer@subsectionentry {0}{2}{2}{23}{T\IeC {\'e}cnicas que dan resultados}}
+\headcommand {\slideentry {2}{2}{1}{23/23}{T\IeC {\'e}cnicas que dan resultados}{0}}
+\headcommand {\beamer@framepages {23}{23}}
+\headcommand {\slideentry {2}{2}{2}{24/24}{T\IeC {\'e}cnicas que dan resultados}{0}}
 \headcommand {\beamer@framepages {24}{24}}
-\headcommand {\slideentry {3}{2}{2}{25/25}{T\IeC {\'e}cnicas que dan resultados}{0}}
+\headcommand {\slideentry {2}{2}{3}{25/25}{T\IeC {\'e}cnicas que dan resultados}{0}}
 \headcommand {\beamer@framepages {25}{25}}
-\headcommand {\slideentry {3}{2}{3}{26/26}{T\IeC {\'e}cnicas que dan resultados}{0}}
+\headcommand {\slideentry {2}{2}{4}{26/26}{T\IeC {\'e}cnicas que dan resultados}{0}}
 \headcommand {\beamer@framepages {26}{26}}
-\headcommand {\slideentry {3}{2}{4}{27/27}{T\IeC {\'e}cnicas que dan resultados}{0}}
+\headcommand {\beamer@sectionpages {14}{26}}
+\headcommand {\beamer@subsectionpages {23}{26}}
+\headcommand {\sectionentry {3}{KNN}{27}{KNN}{0}}
+\headcommand {\slideentry {3}{0}{1}{27/27}{}{0}}
 \headcommand {\beamer@framepages {27}{27}}
-\headcommand {\beamer@sectionpages {15}{27}}
-\headcommand {\beamer@subsectionpages {24}{27}}
-\headcommand {\sectionentry {4}{KNN}{28}{KNN}{0}}
+\headcommand {\beamer@sectionpages {27}{27}}
+\headcommand {\beamer@subsectionpages {27}{27}}
+\headcommand {\sectionentry {4}{J48}{28}{J48}{0}}
 \headcommand {\slideentry {4}{0}{1}{28/28}{}{0}}
 \headcommand {\beamer@framepages {28}{28}}
-\headcommand {\beamer@sectionpages {28}{28}}
-\headcommand {\beamer@subsectionpages {28}{28}}
-\headcommand {\sectionentry {5}{J48}{29}{J48}{0}}
-\headcommand {\slideentry {5}{0}{1}{29/29}{}{0}}
+\headcommand {\slideentry {4}{0}{2}{29/29}{}{0}}
 \headcommand {\beamer@framepages {29}{29}}
-\headcommand {\slideentry {5}{0}{2}{30/30}{}{0}}
-\headcommand {\beamer@framepages {30}{30}}
-\headcommand {\beamer@partpages {1}{30}}
-\headcommand {\beamer@subsectionpages {29}{30}}
-\headcommand {\beamer@sectionpages {29}{30}}
-\headcommand {\beamer@documentpages {30}}
+\headcommand {\beamer@partpages {1}{29}}
+\headcommand {\beamer@subsectionpages {28}{29}}
+\headcommand {\beamer@sectionpages {28}{29}}
+\headcommand {\beamer@documentpages {29}}
 \headcommand {\gdef \inserttotalframenumber {16}}
