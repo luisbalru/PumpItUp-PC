@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+amount_tsh, funder, installer, wpt_nmae, nnum_private, subvillage, population, ward, recorded_by, scheme_name
+
 # Preprocesamiento de datos para SVM
 
 ```{r}
@@ -17,50 +19,184 @@ library(fpc)
 library(caret)
 library(dplyr)
 library(e1071)
+library(Amelia)
+library(DMwR)
+library(NoiseFiltersR)
 setwd("/home/ivan/Documentos/MEGA/Master/MineriaDeDatos_Prepro_Clasificacion/Trabajo/PumpItUp-PC/svm/")
 training <- read.csv("../data/training.csv")
-training.labels <- read.csv("../data/training-labels.csv")
-test <-read.csv("../data/test.csv")
-clases <- training.labels[order(training$id),-1]
-tipos.clase <- unique(clases)
-vector.clases <- 1:length(clases)
-vector.clases[clases == tipos.clase[1]] <- 0
-vector.clases[clases == tipos.clase[2]] <- 1
-vector.clases[clases == tipos.clase[3]] <- 2
-vector.clases <- as.factor(vector.clases)
+# ordenar el training por id
+training <- training[order(training$id),]
 
-dataView <- training[order(training$id),-1]
+training.labels <- read.csv("../data/training-labels.csv")
+# ordenar training labels por id
+clases <- training.labels[order(training.labels$id),]
+test <-read.csv("../data/test.csv")
+tipos.clase <- unique(clases$status_group)
+vector.clases <- 1:length(clases)
+vector.clases[clases$status_group == tipos.clase[1]] <- 0
+vector.clases[clases$status_group == tipos.clase[2]] <- 1
+vector.clases[clases$status_group == tipos.clase[3]] <- 2
+vector.clases <- as.factor(vector.clases)
+dataView <- training
 # Aquí empieza el preprocesamiento.
 
 # Primero, la fecha la cambiamos a un valor con sentido que no sea string.
 
 dataView$date_recorded <- as.numeric(as.Date(dataView$date_recorded))
-
+test$date_recorded <- as.numeric(as.Date(test$date_recorded))
 # Eliminamos valores con información repetida: region y region_id dan la misma informacion.
 
-dataView <- select(dataView,-region)
-attach(dataView)
-dataView <- select(dataView,amount_tsh ,date_recorded,gps_height,longitude,latitude,population,num_private,region_code,construction_year)
-dataView <- data.frame(vector.clases,dataView)
-dataView<- distinct(dataView)
-summary(dataView)
+indicespopulation <- dataView$population==0
+dataView[indicespopulation,"population"]<-NA
+indicesTestPopulation <- test$population==0
+test[indicesTestPopulation,"population"]<-NA
 
+indicesconstruction <- dataView$construction_year==0
+dataView[indicesconstruction,"construction_year"]<-NA
+indicesTestconstruction <- test$construction_year==0
+test[indicesTestconstruction,"construction_year"]<-NA
+
+indicesvacios <- dataView ==""
+dataView[indicesvacios] <- NA
+
+#dataView <- dplyr::select(dataView,-region,-recorded_by,-funder,-wpt_name,-amount_tsh,-installer,-num_private)
+dataView <- dplyr::select(dataView,-region,-amount_tsh, -recorded_by, -scheme_name,-num_private)
+
+# Binarizar codes de region y district.
+dataView$region_code <- as.factor(dataView$region_code)
+dataView$district_code <- as.factor(dataView$district_code)
+
+test <- dplyr::select(test,-region,-amount_tsh, -recorded_by, -scheme_name,-num_private)
+
+# Binarizar codes de region y district.
+test$region_code <- as.factor(test$region_code)
+test$district_code <- as.factor(test$district_code)
+
+
+columnas.irrelevantes <- sapply(1:ncol(dataView), function(X) 100 < length( levels(dataView[,X])) )
+dataView <- dataView[,-which(columnas.irrelevantes)]
+test <- test[,-which(columnas.irrelevantes)]
 ```
+
+Eliminar ruido basandonos en IPF
 
 ```{r}
-plotcluster(dataView[-1],dataView[,1])
+dataView <- data.frame(class = clases$status_group,dataView)
+dataView <- NoiseFiltersR::IPF(dataView,classColumn = 1,p = 0.01,s=3)
+dataView <- dataView$cleanData
+
+# Ahora limpiar ruido intraclase.
+nombreClases <- levels(dataView$class)
+# dataViews <- lapply(1:3, function(X){
+#   indices <- dataView$class == nombreClases[X]
+#   BD <- dataView[indices,]
+#   BDclean <- NoiseFiltersR::IPF(BD,p = 0.1,s=3)
+#   BDclean$cleanData
+# })
+# dataView <- rbind(dataViews[[1]],dataViews[[2]],dataViews[[3]])
+
+clases <- dataView$class
+dataView <- dataView[,-1]
 ```
 
-Primer modelo svm con todas las variables numéricas(hace falta bastante preprocesamiento).
+
+
 ```{r}
-# Para que la función svm() calcule el Support Vector Classifier,
-# se tiene que indicar que la función kernel es lineal.
-prueba <- dataView[sample(nrow(dataView),1200),]
-train <- prueba[1:1000,]
-test <- prueba[1001:1200,]
-modelo_svm <- svm(formula = vector.clases ~ ., data = train, kernel = "linear",cost = 10, scale = FALSE)
+ids <- c(6:8,10:12,14:29)
+dataView.amelia <- amelia(dataView,idvars =  ids)
+dataView <- dataView.amelia$imputations$imp5
+test.amelia <- amelia(test,idvars = ids )
+test <- test.amelia$imputations$imp5
 
-predicciones <- predict(object = modelo_svm, test[-1,])
-paste("Error de test:", 100*mean(test$vector.clases != predicciones),"%")
+indicesNA <- which(apply(dataView,1,function(X) any(is.na(X))))
+dataView <- dataView[-indicesNA,]
+clases <- clases[-indicesNA]
+dataView <- knnImputation(dataView,k=10,meth = "mean")
+test <- knnImputation(test,k=10,meth = "mean",distData = dataView)
+
+# Dumificación de variables.
+
+dummy <- dummyVars("~.",data = dataView,drop2nd=TRUE)
+dataView <-  data.frame(predict(dummy,newdata=dataView))
+test <- data.frame(predict(dummy,newdata = test))
+
+
+
+# Normalizamos
+meanTrain <- apply(dataView[,-1], 2, mean)
+sdTrain <- apply(dataView[,-1], 2, sd)
+
+dataViewNormalized <- dataView
+dataViewNormalized[,-1] <- sweep(sweep(dataView[,-1], 2, meanTrain), 2, sdTrain, "/")
+testNormalized <- test
+testNormalized[,-1] <- sweep(sweep(test[,-1], 2, meanTrain), 2, sdTrain, "/")
+
+idsNoPCA <- c(1,2,3,4,5)
+# Componentes principales
+datasetPC <- prcomp(dataViewNormalized[,-idsNoPCA])
+
+pcaCompView <- as.matrix(dataView[,-idsNoPCA],ncol=ncol(dataViewNormalized[,-idsNoPCA])) %*% datasetPC$rotation [,1:180]
+pcaCompTest <- as.matrix(test[,-idsNoPCA],ncol=ncol(testNormalized[,-idsNoPCA]) )%*% datasetPC$rotation[,1:180]
+
+dataViewPCA <- data.frame(dataViewNormalized[,idsNoPCA],pcaCompView)
+testPCA <- data.frame(testNormalized[,idsNoPCA],pcaCompTest)
+
+dataTrain <- data.frame(clases = clases, dataViewPCA)
+
+levelsClases <- levels(dataTrain$clases)
+levels(dataTrain$clases)<-c("X1","X2","X3")
+
 ```
 
+Balanceo de datos.
+
+```{r}
+saveDataTrain <- dataTrain
+dataTrain <- SMOTE(clases ~.-id,dataTrain,perc.over = 150,perc.under = 1000 )
+summary(SMOTE(clases ~.-id,dataTrain,perc.over = 150,perc.under = 1000 )$clases)
+summary(dataTrain$clases)
+```
+Reducción de ruido
+
+```{r}
+
+#dataTrain <- select(dataTrain,-permit.,-permit.False,-public_meeting.,-public_meeting.False,-lga.Nyamagana,-scheme_management.None,-extraction_type.other...mkulima.shinyanga)
+#test <- select(test,-permit.,-permit.False,-public_meeting.,-public_meeting.False,-lga.Nyamagana,-scheme_management.None,-extraction_type.other...mkulima.shinyanga)
+
+```
+
+## Predicciones de modelos
+
+```{r}
+ctrl <- trainControl(method = "cv",number = 10, savePredictions ="final", classProbs = T )
+#dataTrain[,-c(1,2)] <- scale(dataTrain[,-c(1,2)])
+#test[,-1] <- scale(test[-1]) 
+```
+
+
+```{r}
+modeloSVMLinear <- caret::train(clases~.-id, data=dataTrain, method = "svmLinear", trControl = ctrl)
+predicted.classes.linear <- predict(modeloSVMLinear,testPCA)
+levels(predicted.classes.linear)<- levelsClases
+linear <- data.frame(id =test$id,clases = predicted.classes.linear)
+names(linear)[2]<-"status_group"
+write.csv(linear,"./linearSVM.csv",row.names = FALSE,quote = FALSE)
+summary(predicted.classes.linear)
+
+modeloSVMRadial <- caret::train(clases~.-id, data=dataTrain, method = "svmRadial", trControl = ctrl, na.action = na.omit)
+predicted.classes.radial <- predict(modeloSVMRadial,testPCA)
+levels(predicted.classes.radial)<- levelsClases
+radial <- data.frame(id =test$id,clases = predicted.classes.radial)
+names(radial)[2]<-"status_group"
+write.csv(radial,"./radialSVM.csv",row.names = FALSE,quote = FALSE)
+summary(predicted.classes.radial)
+
+modeloSVMPoly <- caret::train(clases~.-id, data=dataTrain, method = "svmPoly", trControl = ctrl, na.action = na.omit)
+predicted.classes.poly <- predict(modeloSVMPoly,testPCA)
+levels(predicted.classes.poly)<- levelsClases
+poly <- data.frame(id =test$id,clases = predicted.classes.poly)
+names(poly)[2]<-"status_group"
+write.csv(poly,"./polySVM.csv",row.names = FALSE,quote = FALSE)
+summary(predicted.classes.poly)
+
+```
