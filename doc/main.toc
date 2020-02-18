@@ -1,0 +1,7 @@
+\babel@toc {spanish}{}
+\beamer@sectionintoc {1}{SVM}{3}{0}{1}
+\beamer@sectionintoc {2}{RIPPER}{14}{0}{2}
+\beamer@subsectionintoc {2}{1}{T\IeC {\'e}cnicas que no dan resultados}{18}{0}{2}
+\beamer@subsectionintoc {2}{2}{T\IeC {\'e}cnicas que dan resultados}{23}{0}{2}
+\beamer@sectionintoc {3}{KNN}{26}{0}{3}
+\beamer@sectionintoc {4}{J48}{27}{0}{4}
