@@ -50,6 +50,7 @@ def plotData(X, y, route):
     plt.scatter(cl2[:,0], cl2[:,1], color = colors[2], label = "Non functional")
     plt.legend()
     plt.savefig(route+"_2d.png")
+    plt.close()
 
     reduced = TSNE(n_components=3, n_jobs=-1).fit_transform(X)
 
