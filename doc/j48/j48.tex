@@ -1,0 +1,78 @@
+\begin{frame}{Primera aproximación}
+  \metroset{block=fill}
+  \begin{block}{Eliminación de variables}
+    \begin{itemize}
+    \item scheme\_name: 1/2 de valores perdidos
+    \item Variables categóricas con más de 100 características
+    \item recorded\_by: una única categoría
+    \item region\_code: Correlada con district\_code
+    \item construction\_year: Correlada con gps\_height y valores perdidos
+      (valores 0 en esta columna no tienen sentido)
+    \end{itemize}
+  \end{block}
+  \begin{block}{Imputación de valores perdidos}
+    \begin{itemize}
+    \item Variables numéricas: valor medio
+    \item Variables categóricas: valor modal
+    \end{itemize}
+  \end{block}
+  \begin{block}{Resultado}
+    0.7677
+  \end{block}
+\end{frame}
+
+\begin{frame}{Mejoras a dicha aproximación}
+  \metroset{block=fill}
+  \begin{block}{Eliminación de filas con missing values}
+    \begin{itemize}
+    \item Quedan 49841 filas en el conjunto
+    \item Precisión: 0.7328 $\rightarrow$ se descarta la vía
+    \end{itemize}
+  \end{block}
+  \begin{block}{Imputación en train por clase}
+    \begin{itemize}
+    \item En lugar de la media y la moda globales, se imputa por media
+      y mediana de la clase
+    \item En test, seguimos imputando igual
+    \item Precisión: 0.7677 $\rightarrow$ no mejora el resultado, se
+      descarta
+    \end{itemize}
+  \end{block}
+  \begin{block}{Creación de una nueva categoría para los valores perdidos}
+    \begin{itemize}
+    \item En las variables categóricas se añade una categoría nueva,
+      que representa el valor perdido.
+    \item Precisión: 0.7385 $\rightarrow$ se descarta la vía
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Segundo estudio - importancia de las variables}
+  \metroset{block=fill}
+  \begin{block}{Medición de la importancia de las variables}
+    Para las variables numéricas con valores perdidos en
+    entrenamiento, se computa el valor de dichas variables con la
+    media de los valores de la clase, dejando el resto de variables
+    imputadas de forma poco inteligente.\\\\
+
+    Tras esto, se clasifica el conjunto de entrenamiento con
+    validación cruzada.
+  \end{block}
+  \begin{block}{Intuición}
+    Las variables que produzcan una mejora importante en el resultado
+    contendrán información relevante para la solución del problema.
+  \end{block}
+\end{frame}
+
+\begin{frame}{Segundo estudio - importancia de las variables}
+  \metroset{block=fill}
+  \begin{block}{Resultados}
+    Mejora escasa o nula en todas las variables.\\\\
+
+    Imputación correcta de \texttt{construction\_year} $\rightarrow$
+    Mejora en la CV de 0.78 a 0.84.\\\\
+
+    La variable \texttt{construction\_year} parece muy relevante a
+    la hora de establecer la clasificación
+  \end{block}
+\end{frame}
