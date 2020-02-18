@@ -31,13 +31,13 @@ types = {
     "basin" : "str",
     #"subvillage" : "str",
     "region" : "str",
-    #Paco"region_code" : "int",
+    "region_code" : "int",
     "district_code" : "int",
-    #Paco"lga" : "str",
-    #"ward" : "str",
-    ##"population" : "int",
+    "lga" : "str",
+    "ward" : "str",
+    "population" : "int",
     "public_meeting" : "bool",
-    ##"recorded_by" : "str",
+    "recorded_by" : "str",
     "scheme_management" : "str",
     #Paco"scheme_name" : "str",
     "permit" : "bool",
@@ -66,11 +66,11 @@ categorical_columns = [#"funder",
                         "basin",
                         #"subvillage",
                         "region",
-                        #Paco"lga",
+                        "lga",
                         #"ward",
-                        ##"recorded_by",
+                        "recorded_by",
                         "scheme_management",
-                        #Paco"scheme_name",
+                        #"scheme_name",
                         "extraction_type",
                         "extraction_type_group",
                         "extraction_type_class",
@@ -86,11 +86,11 @@ categorical_columns = [#"funder",
                         "source_type",
                         "source_class",
                         "waterpoint_type",
-                        "waterpoint_type_group"]
-                        #$"region_code",
-                        #$"district_code"]
+                        "waterpoint_type_group",
+                        "region_code",
+                        "district_code"]
 
-numerical_column = [#Paco"amount_tsh",
+numerical_column = [#"amount_tsh",
                     "gps_height",
                     "longitude",
                     "latitude"]
@@ -171,7 +171,7 @@ def readData(values_train_route="../data/train_values.csv", labels_train_route="
     data = pd.concat([data_train, data_test])
 
     #data = data.drop(columns=["wpt_name", "installer", "funder", "ward", "num_private", "recorded_by", "subvillage"])
-    data = data.drop(columns=['scheme_name', 'recorded_by', 'region_code', 'amount_tsh', 'num_private', 'funder', 'installer', 'wpt_name', 'subvillage', 'lga', 'ward'])
+    data = data.drop(columns=['scheme_name', 'amount_tsh', 'num_private', 'funder', 'installer', 'wpt_name', 'subvillage', 'ward'])
 
     # Pasamos los datos perdidos a nan
     data["gps_height"][data["gps_height"]==0]=np.nan
