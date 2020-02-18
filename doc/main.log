@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2018.10.17)  17 FEB 2020 20:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2020.2.17)  18 FEB 2020 00:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1527,19 +1527,19 @@ thkerncmss.
 )
 [3
 
-] (./svm/svm.tex [4
+] (./svm/svm.tex
+LaTeX Font Info:    Try loading font information for OMS+cmss on input line 27.
 
-]
-LaTeX Font Info:    Try loading font information for OMS+cmss on input line 29.
-
-LaTeX Font Info:    No file OMScmss.fd. on input line 29.
+LaTeX Font Info:    No file OMScmss.fd. on input line 27.
 
 
 LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
-(Font)              for symbol `textbullet' on input line 29.
+(Font)              for symbol `textbullet' on input line 27.
 
-[5
+[4
+
+] [5
 
 ] [6
 
@@ -1553,61 +1553,73 @@ LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
 
 ] [11
 
-] [12
-
 ]
-<figures/DiagramaFlujoSVM.jpg, id=121, 422.57875pt x 573.14125pt>
+<figures/DiagramaFlujoSVM.jpg, id=110, 422.57875pt x 573.14125pt>
 File: figures/DiagramaFlujoSVM.jpg Graphic file (type jpg)
 <use figures/DiagramaFlujoSVM.jpg>
-Package pdftex.def Info: figures/DiagramaFlujoSVM.jpg  used on input line 104.
+Package pdftex.def Info: figures/DiagramaFlujoSVM.jpg  used on input line 102.
 (pdftex.def)             Requested size: 153.64493pt x 208.3946pt.
 
-Overfull \vbox (27.88043pt too high) detected at line 104
+Overfull \vbox (27.88043pt too high) detected at line 102
+ []
+
+[12
+
+ <./figures/DiagramaFlujoSVM.jpg>]
+<figures/puntuacionSVM.png, id=117, 719.68875pt x 452.4403pt>
+File: figures/puntuacionSVM.png Graphic file (type png)
+<use figures/puntuacionSVM.png>
+Package pdftex.def Info: figures/puntuacionSVM.png  used on input line 116.
+(pdftex.def)             Requested size: 307.28987pt x 193.18552pt.
+
+Overfull \vbox (12.67134pt too high) detected at line 116
  []
 
 [13
 
- <./figures/DiagramaFlujoSVM.jpg>]
-<figures/puntuacionSVM.png, id=129, 719.68875pt x 452.4403pt>
-File: figures/puntuacionSVM.png Graphic file (type png)
-<use figures/puntuacionSVM.png>
-Package pdftex.def Info: figures/puntuacionSVM.png  used on input line 118.
-(pdftex.def)             Requested size: 307.28987pt x 193.18552pt.
+ <./figures/puntuacionSVM.png>]) [14
 
-Overfull \vbox (12.67134pt too high) detected at line 118
- []
+] (./ripper/ripper.tex [15
 
-[14
-
- <./figures/puntuacionSVM.png>]) [15
-
-] (./ripper/ripper.tex [16
-
-] [17
+] [16
 
 ]
-[18
+[17
+
+] [18
 
 ] [19
 
+] [20
+
+] [21
+
+] [22
+
+] [23
+
+] [24
+
+] [25
+
 ]
-<figures/res-ripper.png, id=164, 801.99625pt x 856.19875pt>
+<figures/res-ripper.png, id=191, 801.99625pt x 856.19875pt>
 File: figures/res-ripper.png Graphic file (type png)
 <use figures/res-ripper.png>
-Package pdftex.def Info: figures/res-ripper.png  used on input line 42.
+Package pdftex.def Info: figures/res-ripper.png  used on input line 84.
 (pdftex.def)             Requested size: 160.39641pt x 171.23671pt.
 
-Overfull \vbox (28.82239pt too high) detected at line 42
+Overfull \vbox (28.82239pt too high) detected at line 84
  []
 
-[20
+[26
 
- <./figures/res-ripper.png>]) [21
+ <./figures/res-ripper.png>]) [27
 
-] (./knn/knn.tex) [22
+] (./knn/knn.tex) [28
 
 ] (./j48/j48.tex)
-[23
+[29
 
 ]
 \tf@nav=\write6
@@ -1628,32 +1640,33 @@ LaTeX Info: Redefining \% on input line 23.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 63.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 63.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 95DC2A2DA1AD2B6F34C88EE76CDD0A47;356.
+(rerunfilecheck)             Checksum: FCECE3A86566D06B6E8218B46E24BC5A;318.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 32999 strings out of 492982
- 780966 string characters out of 6134895
+ 33014 strings out of 492982
+ 781105 string characters out of 6134896
  988828 words of memory out of 5000000
- 35807 multiletter control sequences out of 15000+600000
- 14147 words of font info for 55 fonts, out of 8000000 for 9000
+ 35810 multiletter control sequences out of 15000+600000
+ 14503 words of font info for 56 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  71i,13n,98p,1807b,705s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/share/texlive/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmsy9.pfb>
-Output written on main.pdf (23 pages, 199517 bytes).
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmssi9.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy9.pfb>
+Output written on main.pdf (29 pages, 217678 bytes).
 PDF statistics:
- 229 PDF objects out of 1000 (max. 8388607)
- 183 compressed objects within 2 object streams
- 56 named destinations out of 1000 (max. 500000)
- 114 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 263 PDF objects out of 1000 (max. 8388607)
+ 209 compressed objects within 3 object streams
+ 67 named destinations out of 1000 (max. 500000)
+ 106 words of extra memory for PDF output out of 10000 (max. 10000000)
 
