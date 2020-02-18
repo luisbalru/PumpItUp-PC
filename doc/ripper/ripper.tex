@@ -55,19 +55,10 @@
 	\begin{itemize}
 		\item Elimino las variables \textit{wpt-name, subvillage, ward, recorded-by, scheme-name, num-private,region-code, quantity-group, source-type, waterpoint-type-group, payment-type} y \textit{extraction-type-group}
 		\item Imputo valores perdidos en \textit{funder, installer, permit, scheme-management, public-meeting, gps-height, extraction-type.}
-		\item Imputación de la variable \textit{construction-year} con los resultados de la validación cruzada en entrenamiento del mejor algoritmo hasta el momento (KNN).
+		\item Imputación de la variable \textit{construction-year} con los resultados de la validación cruzada en entrenamiento del mejor algoritmo hasta el momento (KNN) para las instancias de test. Para training, para cada categoría, tomo la media de las instancias que pertenecen a dicha categoría y no tienen valor perdido ($\neq 0$).
 	\end{itemize}
 \end{frame}
 
-
-\begin{frame}{Imagen del conjunto tras el preprocesamiento (TSNE)}
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.2]{figures/dat-ripper.png}
-	\caption{Datos tras el preprocesamiento (TSNE)}
-\end{figure}
-	
-\end{frame}
 
 \begin{frame}{Mejor modelo}
 	\begin{itemize}
