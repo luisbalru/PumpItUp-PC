@@ -4,7 +4,8 @@ import pandas as pd
 train_dataset = pd.read_csv("data/training.csv")
 train_labels = pd.read_csv("data/training-labels.csv")
 test_dataset = pd.read_csv("data/test.csv")
-test_labels = pd.read_csv("data/test-labels.csv")
+
+test_construction_year = pd.read_csv("data/construction-year-test.csv")
 
 train_dataset['date_recorded'] = pd.to_datetime(train_dataset['date_recorded'])
 test_dataset['date_recorded'] = pd.to_datetime(test_dataset['date_recorded'])
@@ -32,7 +33,8 @@ variables_to_drop = [
     "scheme_name",
     "recorded_by",
     "region_code",
-    'amount_tsh'
+    'amount_tsh',
+    'num_private'
 ]
 
 for col in categorical_vars.columns:
@@ -57,7 +59,7 @@ test_dataset = test_dataset.fillna(value=fill_values)
 
 train_dataset = pd.merge(train_dataset, train_labels)
 
-## IMPUTATION OF ZEROES (MISSING VALUES FOR SOME COLUMNS)
+## IMPUTATION OF ZEROES (MISSING VALUES FOR CONSTRUCTION YEAR)
 fill_1 = np.mean(train_dataset.loc[
     (train_dataset['construction_year'] > 0) &
     (train_dataset['status_group'] == "functional"),
@@ -94,27 +96,9 @@ train_dataset.loc[
     "construction_year"
 ] = fill_3
 
-test_dataset = pd.merge(test_dataset, test_labels)
+test_dataset.drop(columns="construction_year", inplace=True)
 
-test_dataset.loc[
-    (test_dataset['construction_year'] == 0) &
-    (test_dataset['status_group'] == "functional"),
-    "construction_year"
-] = fill_1
-
-test_dataset.loc[
-    (test_dataset['construction_year'] == 0) &
-    (test_dataset['status_group'] == "non functional"),
-    "construction_year"
-] = fill_2
-
-test_dataset.loc[
-    (test_dataset['construction_year'] == 0) &
-    (test_dataset['status_group'] == "functional needs repair"),
-    "construction_year"
-] = fill_3
-
-test_dataset.drop(columns="status_group", inplace=True)
+test_dataset = pd.merge(test_dataset, test_construction_year)
 
 train_dataset['age'] = train_dataset['year_recorded'] - train_dataset[
     'construction_year'
@@ -123,6 +107,9 @@ train_dataset['age'] = train_dataset['year_recorded'] - train_dataset[
 test_dataset['age'] = test_dataset['year_recorded'] - test_dataset[
     'construction_year'
 ]
+
+train_dataset.drop(columns=["construction_year", "year_recorded"], inplace=True)
+test_dataset.drop(columns=["construction_year", "year_recorded"], inplace=True)
 
 train_dataset.to_csv("tree/train-preprocessed.csv")
 test_dataset.to_csv("tree/test-preprocessed.csv")
