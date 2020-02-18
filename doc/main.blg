@@ -1,0 +1,74 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: main.aux
+The style file: amsalpha.bst
+Database file #1: referencias.bib.bib
+Too many commas in name 1 of "David Charte, Francisco Charte, Salvador García, María J del Jesus, Francisco Herrera" for entry autoencoder
+while executing---line 1276 of file amsalpha.bst
+Too many commas in name 1 of "David Charte, Francisco Charte, Salvador García, María J del Jesus, Francisco Herrera" for entry autoencoder
+while executing---line 1276 of file amsalpha.bst
+Too many commas in name 1 of "David Charte, Francisco Charte, Salvador García, María J del Jesus, Francisco Herrera" for entry autoencoder
+while executing---line 1276 of file amsalpha.bst
+Too many commas in name 1 of "David Charte, Francisco Charte, Salvador García, María J del Jesus, Francisco Herrera" for entry autoencoder
+while executing---line 1276 of file amsalpha.bst
+Warning--to sort, need author or key in allknn
+Warning--to sort, need author or key in pyod
+Warning--to sort, need author or key in pydml
+Warning--missing author in allknn
+Too many commas in name 1 of "David Charte, Francisco Charte, Salvador García, María J del Jesus, Francisco Herrera" for entry autoencoder
+while executing---line 1372 of file amsalpha.bst
+Too many commas in name 1 of "David Charte, Francisco Charte, Salvador García, María J del Jesus, Francisco Herrera" for entry autoencoder
+while executing---line 1372 of file amsalpha.bst
+Warning--missing journal name in autoencoder
+Warning--missing journal, volume, and year in autoencoder
+Warning--missing pages in autoencoder
+Warning--missing booktitle in adasyn
+Warning--missing journal name in ssma
+Warning--missing journal, volume, and year in ssma
+Warning--missing pages in ssma
+Warning--missing pages in ipf
+Warning--missing journal name in knn
+Warning--missing journal, volume, and year in knn
+Warning--missing pages in knn
+You've used 16 entries,
+            2624 wiz_defined-function locations,
+            643 strings with 6586 characters,
+and the built_in function-call counts, 5736 in all, are:
+= -- 511
+> -- 260
+< -- 4
++ -- 92
+- -- 89
+* -- 492
+:= -- 899
+add.period$ -- 16
+call.type$ -- 16
+change.case$ -- 94
+chr.to.int$ -- 16
+cite$ -- 34
+duplicate$ -- 244
+empty$ -- 458
+format.name$ -- 102
+if$ -- 1157
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 30
+newline$ -- 59
+num.names$ -- 39
+pop$ -- 133
+preamble$ -- 1
+purify$ -- 110
+quote$ -- 0
+skip$ -- 178
+stack$ -- 0
+substring$ -- 291
+swap$ -- 40
+text.length$ -- 4
+text.prefix$ -- 1
+top$ -- 0
+type$ -- 124
+warning$ -- 15
+while$ -- 47
+width$ -- 19
+write$ -- 160
+(There were 6 error messages)

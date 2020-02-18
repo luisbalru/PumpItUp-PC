@@ -1,0 +1,3 @@
+\frametitle{Contenidos}
+\setbeamertemplate{section in toc}[sections numbered]
+\tableofcontents[hideallsubsections]
