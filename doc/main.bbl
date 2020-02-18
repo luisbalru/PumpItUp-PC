@@ -11,6 +11,10 @@
 \emph{An experiment with the edited nearest-neighbor rule}, IEEE Transactions
   on Systems, Man, and Cybernetics \textbf{SMC-6} (1976), no.~6, 448--452.
 
+\bibitem[AS16]{ASADI201619}
+Shahrokh Asadi and Jamal Shahrabi, \emph{Ripmc: Ripper for multiclass
+  classification}, Neurocomputing \textbf{191} (2016), 19 -- 33.
+
 \bibitem[CBHK02]{smote}
 Nitesh Chawla, Kevin Bowyer, Lawrence Hall, and W.~Kegelmeyer, \emph{Smote:
   Synthetic minority over-sampling technique}, J. Artif. Intell. Res. (JAIR)

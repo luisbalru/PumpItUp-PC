@@ -30,45 +30,45 @@ Warning--missing pages in ipf
 Warning--missing journal name in knn
 Warning--missing journal, volume, and year in knn
 Warning--missing pages in knn
-You've used 13 entries,
+You've used 14 entries,
             2624 wiz_defined-function locations,
-            621 strings with 6139 characters,
-and the built_in function-call counts, 4511 in all, are:
-= -- 393
-> -- 191
+            629 strings with 6265 characters,
+and the built_in function-call counts, 4905 in all, are:
+= -- 430
+> -- 210
 < -- 4
-+ -- 68
-- -- 65
-* -- 378
-:= -- 695
-add.period$ -- 13
-call.type$ -- 13
-change.case$ -- 75
-chr.to.int$ -- 13
-cite$ -- 31
-duplicate$ -- 202
-empty$ -- 372
-format.name$ -- 76
-if$ -- 914
++ -- 74
+- -- 71
+* -- 413
+:= -- 759
+add.period$ -- 14
+call.type$ -- 14
+change.case$ -- 81
+chr.to.int$ -- 14
+cite$ -- 32
+duplicate$ -- 216
+empty$ -- 403
+format.name$ -- 83
+if$ -- 995
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 24
-newline$ -- 49
-num.names$ -- 30
-pop$ -- 116
+missing$ -- 26
+newline$ -- 52
+num.names$ -- 33
+pop$ -- 122
 preamble$ -- 1
-purify$ -- 88
+purify$ -- 95
 quote$ -- 0
-skip$ -- 145
+skip$ -- 156
 stack$ -- 0
-substring$ -- 220
-swap$ -- 37
+substring$ -- 248
+swap$ -- 38
 text.length$ -- 4
 text.prefix$ -- 1
 top$ -- 0
-type$ -- 100
+type$ -- 108
 warning$ -- 15
-while$ -- 33
-width$ -- 17
-write$ -- 127
+while$ -- 37
+width$ -- 18
+write$ -- 137
 (There were 6 error messages)
