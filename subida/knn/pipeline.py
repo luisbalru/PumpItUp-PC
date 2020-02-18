@@ -85,13 +85,13 @@ def Pipeline(X_train, y_train, X_test, n_dims=44):
     X_train = np.delete(X_train, ind_delete, axis=0)
     '''
 
-    plotData(X_train, y_train, "raw")
+    #plotData(X_train, y_train, "raw")
 
     print("Scaling data...")
     X_train = preprocessing.scale(X_train)
     X_test = preprocessing.scale(X_test)
 
-    plotData(X_train, y_train, "scaled")
+    #plotData(X_train, y_train, "scaled")
 
     print("PCA con " + str(n_dims) + " componentes...")
     X_train_binary = np.delete(X_train, ind_numeric, axis=1)
@@ -106,7 +106,7 @@ def Pipeline(X_train, y_train, X_test, n_dims=44):
     X_test = np.hstack((X_test_numeric, X2))
     print("Numero de features: " + str(len(X_train[0])))
 
-    plotData(X_train, y_train, "PCA")
+    #plotData(X_train, y_train, "PCA")
 
     '''
     print("Reduccion de dimensionalidad con AutoEncoder...")
@@ -135,7 +135,7 @@ def Pipeline(X_train, y_train, X_test, n_dims=44):
     print("Instancias por clase:")
     print(np.unique(y_train,return_counts=True))
 
-    plotData(X_train, y_train, "IPF")
+    #plotData(X_train, y_train, "IPF")
 
     '''
     print("Denoising autoencoder...")
@@ -166,7 +166,7 @@ def Pipeline(X_train, y_train, X_test, n_dims=44):
     print("Instancias por clase:")
     print(np.unique(y_train,return_counts=True))
 
-    plotData(X_train, y_train, "SMOTE")
+    #plotData(X_train, y_train, "SMOTE")
 
     '''
     print("ADASYN...")
@@ -190,7 +190,7 @@ def Pipeline(X_train, y_train, X_test, n_dims=44):
     print("Instancias por clase:")
     print(np.unique(y_train,return_counts=True))
 
-    plotData(X_train, y_train, "anomalias_knn")
+    #plotData(X_train, y_train, "anomalias_knn")
 
     '''
     print("EditedNearestNeighbours...")
