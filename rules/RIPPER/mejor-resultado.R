@@ -41,13 +41,7 @@ train$construction_year[train$construction_year == 0 & train$status_group == 'fu
 train$construction_year[train$construction_year == 0 & train$status_group == 'non functional'] = round(mean(train$construction_year[train$construction_year != 0 & train$status_group == 'non functional']))
 train$construction_year[train$construction_year == 0 & train$status_group == 'functional needs repair'] = round(mean(train$construction_year[train$construction_year != 0 & train$status_group == 'functional needs repair']))
 
-antigua_subida = read.csv("new.csv")
-test = cbind(test, status_group=antigua_subida$status_group)
-
-test$construction_year[test$construction_year == 0 & test$status_group == 'functional'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'functional']))
-test$construction_year[test$construction_year == 0 & test$status_group == 'non functional'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'non functional']))
-test$construction_year[test$construction_year == 0 & test$status_group == 'functional needs repair'] = round(mean(test$construction_year[test$construction_year != 0 & test$status_group == 'functional needs repair']))
-
+test$construction_year = read.csv("cyt.csv")
 
 # Creación de la variable estado en el test para que
 # coincidan en número a la hora de hacer transformaciones
