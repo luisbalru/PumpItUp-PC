@@ -55,7 +55,11 @@
 \begin{itemize}
 	\item Amelia para valores perdidos numéricos(método iterativo de imputación).
 	
+	Honaker, J., King, G.,  Blackwell, M. (2011). Amelia II: A program for missing data. Journal of statistical software, 45(7), 1-47.
+	
 	\item Imputación mediante KNN de valores categóricos(moda).
+	
+	Zhang, S. (2012). Nearest neighbor selection for iteratively kNN imputation. Journal of Systems and Software, 85(11), 2541-2552.
 	
 \end{itemize}
 
@@ -63,29 +67,22 @@
 
 
 \begin{frame}
-\frametitle{Duminicación de variables}
-
-\begin{itemize}
-	\item Para cada valor las variables categórica, creamos una variable que valdrá 1 si la instancia tiene este valor.
-	\item Eliminamos una de las variables dumificadas ya que no aporta más información.
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}
 \frametitle{PCA para variables dumificadas. Selección de subespacios relevantes}
 
 \begin{itemize}
-	\item Normalizamos las variables para aplicar PCA.
+	\item One hot encoding. Para cada valor las variables categórica, creamos una variable que valdrá 1 si la instancia tiene este valor.
+	
+	\item Normalizamos las variables.
 	\item Aplicamos PCA y nos quedamos con las variables cuya desviación típica sea mayor de un umbral(0.00001).
-	\item Pasamos de 208 variables a 132.
+	\item Pasamos de 208 variables a 173.
 \end{itemize}
+
 \end{frame}
 
 \begin{frame}
 \frametitle{Aplicación de SMOTE para balancear clases}
 
-El método SMOTE genera instancias de la clase minoritaria, sobrerepresentandola. Mejora la clasificación de instancias minoritarias pero no la tasa de acierto.
+El método SMOTE genera instancias de la clase minoritaria, sobrerepresentandola. 
 
 \end{frame}
 
@@ -108,9 +105,10 @@ El método SMOTE genera instancias de la clase minoritaria, sobrerepresentandola
 \begin{figure}
 	\centering
 	\includegraphics[width=\linewidth]{figures/puntuacionSVM}
-	\caption{Máxima puntuación: 74.52\% el 12 de febrero}
+	\caption{Máxima puntuación: 74.52\%,  12 de febrero}
 	\label{fig:puntuacionsvm}
 \end{figure}
+Posición final: 2209
 
 
 \end{frame}
