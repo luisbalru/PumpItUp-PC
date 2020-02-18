@@ -1,11 +1,9 @@
 import numpy as np
 import pandas as pd
 
-train_dataset = pd.read_csv("data/training.csv")
-train_labels = pd.read_csv("data/training-labels.csv")
-test_dataset = pd.read_csv("data/test.csv")
-
-test_construction_year = pd.read_csv("data/construction-year-test.csv")
+train_dataset = pd.read_csv("../../data/training.csv")
+train_labels = pd.read_csv("../../data/training-labels.csv")
+test_dataset = pd.read_csv("../../data/test.csv")
 
 train_dataset['date_recorded'] = pd.to_datetime(train_dataset['date_recorded'])
 test_dataset['date_recorded'] = pd.to_datetime(test_dataset['date_recorded'])
@@ -96,9 +94,11 @@ train_dataset.loc[
     "construction_year"
 ] = fill_3
 
-test_dataset.drop(columns="construction_year", inplace=True)
+test_construction_year = pd.read_csv("../../data/construction_year_test.csv")
 
-test_dataset = pd.merge(test_dataset, test_construction_year)
+test_dataset.loc[
+    test_dataset['construction_year'] == 0, 'construction_year'
+] = test_construction_year['construction_year']
 
 train_dataset['age'] = train_dataset['year_recorded'] - train_dataset[
     'construction_year'
@@ -108,8 +108,5 @@ test_dataset['age'] = test_dataset['year_recorded'] - test_dataset[
     'construction_year'
 ]
 
-train_dataset.drop(columns=["construction_year", "year_recorded"], inplace=True)
-test_dataset.drop(columns=["construction_year", "year_recorded"], inplace=True)
-
-train_dataset.to_csv("tree/train-preprocessed.csv")
-test_dataset.to_csv("tree/test-preprocessed.csv")
+train_dataset.to_csv("../train-preprocessed.csv")
+test_dataset.to_csv("../test-preprocessed.csv")

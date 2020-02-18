@@ -1,0 +1,73 @@
+\documentclass[10pt]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish, es-tabla]{babel}
+
+\usetheme{metropolis}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{graphicx}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{esvect}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\title{Pump it Up. Equipo CharlaTED}
+\author{Ignacio Aguilera Martos (<usuario>, KNN),
+  Luis Balderas Ruiz (luisbalru, RIPPER),
+  Francisco Luque Sánchez (fluque1995, C4.5),
+  Iván Sevillano García (isega24, SVM)}
+
+\date{\today}
+\institute{Preprocesamiento y Clasificación}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}[fragile]{Contenidos}
+\setbeamertemplate{section in toc}[sections numbered]
+\tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{SVM}
+\input{./svm/svm.tex}
+
+\section{RIPPER}
+\input{./ripper/ripper.tex}
+
+\section{KNN}
+\input{./knn/knn.tex}
+
+\section{J48}
+\input{./j48/j48.tex}
+
+\begin{frame}[allowframebreaks]
+\frametitle{Referencias}
+\nocite{*}
+\bibliographystyle{amsalpha}
+\bibliography{referencias.bib}
+\end{frame}
+
+\begin{frame}[standout]
+\LARGE{¿Preguntas?}
+\vspace{10px}
+
+\end{frame}
+
+
+\end{document}

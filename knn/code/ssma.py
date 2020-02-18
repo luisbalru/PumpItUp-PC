@@ -13,12 +13,43 @@ import numpy as np
 
 from sklearn.utils.validation import check_X_y
 from sklearn.neighbors.classification import KNeighborsClassifier
+from sklearn.neighbors import NearestNeighbors
+from sklearn.preprocessing import LabelEncoder
 
 from sklearn.metrics import accuracy_score
 
 from base import InstanceReductionMixin
 
 from sklearn.model_selection import StratifiedKFold
+
+class MaskKNNEval():
+    def __init__(self,*args,**kwargs):
+        self.nn = NearestNeighbors(*args,**kwargs)
+
+    def _rowbincount(self,x,dsts,N=3):
+        return (np.bincount(x.ravel() + np.arange(x.shape[0]).repeat(x.shape[1])*N,weights=1/(dsts+1e-20),minlength=x.shape[0]*N)).reshape((-1,N))
+
+    def fit_predict(self,X,y,rmsk=None,cmsk=None):
+        rmsk = rmsk if rmsk is not None else np.ones(X.shape[0],dtype=np.bool)
+        cmsk = cmsk if cmsk is not None else np.ones(X.shape[1],dtype=np.bool)
+        KNN_SIZE = self.nn.n_neighbors
+
+        self.nn.fit(X[rmsk][:,cmsk])
+        ypred = self.nn.kneighbors(X[:,cmsk],KNN_SIZE+1)
+
+        ridxs = np.arange(y.shape[0]).repeat(KNN_SIZE)
+        vis = rmsk.astype(np.int)
+        cidxs = (vis.repeat(KNN_SIZE).reshape(-1,KNN_SIZE)+np.arange(KNN_SIZE)).ravel()
+
+        dsts = ypred[0][ridxs,cidxs]
+        eidxs = np.where(rmsk)[0][ypred[1][ridxs,cidxs]]
+#         return ypred, dsts, eidxs
+        return self._rowbincount(
+            y[eidxs].reshape(-1,KNN_SIZE),dsts
+            ).argmax(1)
+
+    def fit_acc(self,X,y,*args,**kwargs):
+        return accuracy_score(y,self.fit_predict(X,y,*args,**kwargs))
 
 
 class SSMA(InstanceReductionMixin):
@@ -80,7 +111,7 @@ class SSMA(InstanceReductionMixin):
     Memetic Computing, 2(3):183–199, 2010.
 
     """
-    def __init__(self, n_neighbors=1, alpha=0.6, max_loop=1000, threshold=0, chromosomes_count=10, initial_density=0.9):
+    def __init__(self, n_neighbors=3, alpha=0.6, max_loop=1000, threshold=0, chromosomes_count=10, initial_density=0.9):
         self.n_neighbors = n_neighbors
         self.alpha = alpha
         self.max_loop = max_loop
@@ -102,6 +133,7 @@ class SSMA(InstanceReductionMixin):
         mask = np.asarray(chromosome, dtype=bool)
         cX, cy = X[mask], y[mask]
 
+        return MaskKNNEval(n_neighbors=self.n_neighbors,n_jobs=-1).fit_acc(X,y,rmsk=mask)
         '''
         skf = StratifiedKFold(n_splits=5)
         splits_indices = skf.split(cX, cy)
@@ -117,6 +149,7 @@ class SSMA(InstanceReductionMixin):
 
         return np.mean(scores)
         '''
+
         self.classifier.fit(cX,cy)
         labels = self.classifier.predict(X)
         return accuracy_score(y, labels)
@@ -285,12 +318,13 @@ class SSMA(InstanceReductionMixin):
 
     def main_loop(self, X, y):
         print("Generando la población inicial...")
+        y = LabelEncoder().fit_transform(y)
         self.generate_population(X, y)
         n, worse_fit_index = 0, -1
         while (n < self.max_loop):
 
             print("Iteracion " + str(n) + "/" + str(self.max_loop) + ", mejor rendimiento: " + str(np.amax(self.evaluations)))
-            print("Longitud original: " + str(len(y)) + ", longitud actual: " + str(np.sum(self.chromosomes[np.argmax(self.evaluations)])))
+            print("Longitud original: " + str(len(y)) + ", longitud actual: " + str(int(np.sum(self.chromosomes[np.argmax(self.evaluations)]))))
 
             #print("Iteracion " + str(n) + "/" + str(self.max_loop) + ", mejor rendimiento: " + str(np.amax(self.evaluations)))
 
